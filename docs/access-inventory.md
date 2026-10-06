@@ -2,9 +2,9 @@
 
 This file records access state and credential aliases only. Never put secret values here.
 
-| Service | Account / access status | Secret Hatch alias | Offer | Expiry | Verification |
+| Service | Account / access status | Credential alias / local name | Offer | Expiry | Verification |
 |---|---|---|---|---|---|
-| PayPal Developer | Not set up in this run; account and sandbox app need owner sign-in | `paypal.client_id`, `paypal.client_secret` | Sandbox is free | Not stated | OAuth and Orders smoke test pending |
+| PayPal Developer | Signed in; default sandbox app and UK Business + Personal accounts available; credentials stored in ignored local `.env` | `paypal.client_id` → `.env: PAYPAL_CLIENT_ID`; `paypal.client_secret` → `.env: PAYPAL_CLIENT_SECRET` | Sandbox is free; no live account or billing enabled | Not stated | OAuth passed; GBP 1.00 test order created and read back as `CREATED`; not captured |
 | Channel3 | Signed in; API key stored as `CHANNEL3_API_KEY` in ignored local `.env` (Secret Hatch CLI unavailable) | `.env: CHANNEL3_API_KEY` | Hackathon promo redeemed; 20,000 bonus credits; 21,000 bonus credits currently remain, plus 999/1,000 monthly credits | No promo expiry stated | Search verified; 4 Fender Telecaster results |
 | Render | Signed in to Hobby workspace; no card on file | None | Public offer advertises $50 hackathon credits, but claim portal asks for organizer link; not applied | Not stated | Billing page shows $0.00 balance, no card, no services |
 | Astropods | Not claimed | Not yet known | Free account advertised; credits not stated | Not stated | Free balance/pricing check pending |
