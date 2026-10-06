@@ -10,6 +10,7 @@
 # Local state and artifacts
 .DS_Store
 Thumbs.db
+.devpost-hackathon-state.json
 .vscode/
 .idea/
 node_modules/
