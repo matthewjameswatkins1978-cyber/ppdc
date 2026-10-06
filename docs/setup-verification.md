@@ -6,7 +6,7 @@ Updated 2026-10-06. PayPal and Channel3 account smoke checks have been run.
 - [x] PayPal sandbox order create and lookup; GBP 1.00 order remains `CREATED` and uncaptured
 - [x] Channel3 promo code redeemed; one search succeeded and returned 4 Fender Telecaster products; dashboard shows 21,000 bonus credits and 999 monthly credits remain
 - [x] Parallel account granted $20 credit for 60 days, no card added; one Turbo Search and one Extract succeeded. Billing UI rounds balance to $20.00 and Usage showed no usage yet.
-- [ ] Astropods signup and account checks pending Matthew setting a fresh password and submitting; public $10 signup credit is not account-verified; no inference call made
+- [x] Astropods account signed in; $10 one-time signup credit applied; usage $0.00; no card; $5 alert and $20 hard spend limit. Exact gateway model catalog not visible until agent deployment; no test agent created. Not planned for MVP absent a concrete hosting need.
 - [ ] Render account signed in (Hobby), no card or services; billing shows $0.00 credit; claim portal requires organizer claim link
 - [x] APIMatic PayPal Context Plugin installed for Codex, Cursor, and VS Code; reload/start a new Codex session to load
 - [x] Local Postman collection prepared for OAuth, Orders create/capture/lookup; no secrets included. Import to a signed-in Postman workspace pending.
