@@ -1,0 +1,126 @@
+{
+  "info": {
+    "name": "PPDC PayPal Sandbox",
+    "description": "PayPal REST API smoke workflow for PPDC. Uses sandbox only. Create a local-only Postman environment for client_id, client_secret, and access_token; do not put credentials in collection variables or export/sync them. Create makes a GBP 1.00 test order. Capture is optional and completes a simulated sandbox payment; it is not needed for the setup smoke check.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{access_token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://api-m.sandbox.paypal.com", "type": "string" },
+    { "key": "client_id", "value": "", "type": "string" },
+    { "key": "client_secret", "value": "", "type": "string" },
+    { "key": "access_token", "value": "", "type": "string" },
+    { "key": "order_id", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "OAuth — get sandbox access token",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            { "key": "username", "value": "{{client_id}}", "type": "string" },
+            { "key": "password", "value": "{{client_secret}}", "type": "string" }
+          ]
+        },
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "grant_type", "value": "client_credentials", "type": "text" }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/v1/oauth2/token",
+          "host": ["{{base_url}}"],
+          "path": ["v1", "oauth2", "token"]
+        },
+        "description": "Exchanges the sandbox app credentials for a short-lived access token. The test script stores the returned token in the active environment, not the collection, for subsequent requests."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('OAuth succeeds', function () { pm.response.to.have.status(200); });",
+              "const payload = pm.response.json();",
+              "if (payload.access_token) pm.environment.set('access_token', payload.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders — create GBP 1.00 sandbox order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Prefer", "value": "return=representation" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": \"CAPTURE\",\n  \"purchase_units\": [\n    {\n      \"amount\": { \"currency_code\": \"GBP\", \"value\": \"1.00\" },\n      \"description\": \"PPDC sandbox API smoke check — do not capture\"\n    }\n  ]\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/v2/checkout/orders",
+          "host": ["{{base_url}}"],
+          "path": ["v2", "checkout", "orders"]
+        },
+        "description": "Creates an unpaid sandbox order. Does not approve or capture it."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Order is created', function () { pm.response.to.have.status(201); });",
+              "const payload = pm.response.json();",
+              "if (payload.id) pm.collectionVariables.set('order_id', payload.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders — look up current order",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/v2/checkout/orders/{{order_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["v2", "checkout", "orders", "{{order_id}}"]
+        },
+        "description": "Reads order details at its current state."
+      }
+    },
+    {
+      "name": "Orders — capture order (optional sandbox action)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": {
+          "raw": "{{base_url}}/v2/checkout/orders/{{order_id}}/capture",
+          "host": ["{{base_url}}"],
+          "path": ["v2", "checkout", "orders", "{{order_id}}", "capture"]
+        },
+        "description": "Optional, intentional sandbox-only action. Captures an approved test order and changes its status. Do not run for the PPDC setup smoke check; capture is not needed for this project yet."
+      }
+    }
+  ]
+}
