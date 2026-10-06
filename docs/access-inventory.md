@@ -5,7 +5,7 @@ This file records access state and credential aliases only. Never put secret val
 | Service | Account / access status | Secret Hatch alias | Offer | Expiry | Verification |
 |---|---|---|---|---|---|
 | PayPal Developer | Not set up in this run; account and sandbox app need owner sign-in | `paypal.client_id`, `paypal.client_secret` | Sandbox is free | Not stated | OAuth and Orders smoke test pending |
-| Channel3 | Not claimed; hackathon signup/key issuance pending | `channel3.api_key` | 20,000 searches with `PAYPAL-HACKATHON-2026` | Not stated | One product search pending |
+| Channel3 | Signed in; API key stored as `CHANNEL3_API_KEY` in ignored local `.env` (Secret Hatch CLI unavailable) | `.env: CHANNEL3_API_KEY` | Hackathon promo redeemed; 20,000 bonus credits; 21,000 bonus credits currently remain, plus 999/1,000 monthly credits | No promo expiry stated | Search verified; 4 Fender Telecaster results |
 | Render | Not claimed | None for initial account setup | $50 hackathon credits | Not stated | Credit application pending |
 | Astropods | Not claimed | Not yet known | Free account advertised; credits not stated | Not stated | Free balance/pricing check pending |
 | Parallel | Not claimed; not listed as a Devpost sponsor | `parallel.api_key` | Ordinary plan advertises up to 5,000 free requests/month, up to $80 signup credit + $5 monthly credit | Check actual account eligibility and expiry | One public search pending |
