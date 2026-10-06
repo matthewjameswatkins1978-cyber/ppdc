@@ -7,7 +7,7 @@ Updated 2026-10-06. No account-dependent smoke tests have been run yet.
 - [x] Channel3 promo code redeemed; one search succeeded and returned 4 Fender Telecaster products; dashboard shows 21,000 bonus credits and 999 monthly credits remain
 - [ ] Parallel public search and extraction (vendor and free terms still to verify)
 - [ ] Astropods free balance/pricing reviewed; tiny call only if free credit is confirmed
-- [ ] Render $50 credit visible in account; no service deployed
+- [ ] Render account signed in (Hobby), no card or services; billing shows $0.00 credit; claim portal requires organizer claim link
 - [x] APIMatic PayPal Context Plugin installed for Codex, Cursor, and VS Code; reload/start a new Codex session to load
 - [ ] Postman PayPal collection imported; no secrets in exports
 - [ ] KERNEL $50 credit visible; available, not yet required
