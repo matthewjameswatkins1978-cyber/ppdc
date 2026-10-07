@@ -1,6 +1,6 @@
 # PPDC-001 Phase 3 — Research Enrichment
 
-Status: **PARTIAL** while Parallel's current account balance and billing state await sign-in verification.
+Status: **COMPLETE**. Phase 3 acceptance checks are complete; PR review remains open.
 
 ## What is implemented
 
@@ -28,10 +28,14 @@ Current provider docs: [search request and monthly allowance](https://docs.trych
 
 ### Parallel
 
-No Phase 3 live request has been made. The account's setup record shows a $20 grant from October 6, 2026, with an approximate December 5 expiry and no card at setup, but the current balance and payment-method state have not been rechecked. The dashboard currently requires sign-in, so no live call will be made until the current credit and card status are visible. Parallel's current free-credit page says the $5 monthly allowance applies to organizations with a card and excess usage is billed; it is not treated as safe without current account verification ([Parallel free-credit terms](https://parallel.ai/blog/free-tier-parallel)).
+One product-only live Search API request was run through the Deal Checker on 7 October 2026 using the illustrative Fender Player Telecaster facts; no private evidence was sent. The query returned 10 normalized public titles and URLs. It included Player, Acoustasonic, Player II, and used-listing variants. The app preserved this as a disagreement and asked the user to confirm the exact model or variant. No live Extract API call was needed for this Phase 3 path.
+
+Before the search, the signed-in billing page showed **$20.00 in account credits, $0.01 used, and $19.99 remaining**, expiring **5 December 2026**. Afterward, the displayed balance remained $19.99. The Search API Turbo rate is **$1 per 1,000 requests**; the usage view reports monetary amounts rounded to the nearest cent and showed $0.00 for this small usage. The usage view showed two Search API requests in the selected period overall; one was this Phase 3 smoke test. No payment method is attached, and auto-reload is off. The UI says a payment method is required for the separate monthly credit. No card was added and no personal spend occurred. See [Parallel free-credit terms](https://parallel.ai/blog/free-tier-parallel).
+
+The successful result, visible provenance, disagreement handling, and follow-up question were verified in the local app. Offline tests cover normalized response handling, fixture replay, and cache hits. No additional live request was made.
 
 ## Offline verification scope
 
 The GitHub Actions workflow runs tests, TypeScript, production build, low-severity npm audit, and schema/source-reference validation for all 32 machine-readable benchmark fixtures. It contains no credentials and does not run live provider tests.
 
-Live smoke counts are bounded to three requests per provider for this phase. Channel3 used three; Parallel used zero pending account verification. Do not begin visual polish or Phase 4 before review.
+Live smoke counts were bounded to three requests per provider: Channel3 used three and Parallel used one. Both providers have offline fixture/cache coverage; no further live requests are needed for Phase 3. Do not begin visual polish or Phase 4 before review.
