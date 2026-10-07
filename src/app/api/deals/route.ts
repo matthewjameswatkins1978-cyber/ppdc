@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     const dealId = existing?.id ?? randomUUID();
     const additions: Deal[] = [];
-    if (text) additions.push(extractDealFromText(text, dealId, "User-supplied listing text", randomUUID()));
+    if (text) additions.push(extractDealFromText(text, dealId, existing ? "Follow-up message" : "User-supplied listing text", randomUUID()));
     if (image instanceof File) {
       if (image.size > 8 * 1024 * 1024) return NextResponse.json({ error: "Image must be 8 MB or smaller." }, { status: 413 });
       additions.push(await extractDealFromImage({
