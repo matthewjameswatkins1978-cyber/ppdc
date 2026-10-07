@@ -11,6 +11,8 @@ export interface ProtectionPassport {
   price: number;
   currency: string;
   statedCondition?: string;
+  /** Seller-declared payment method from Deal evidence; distinct from the verified transaction route. */
+  statedPaymentMethod?: string;
   deliveryTerms?: string;
   paymentRoute: "PayPal Sandbox";
   materialPromises: string[];
@@ -41,6 +43,7 @@ export function createProtectionPassport(input: {
     price: deal.price.value,
     currency: deal.currency.value,
     ...(deal.condition ? { statedCondition: deal.condition.value } : {}),
+    ...(deal.paymentMethod ? { statedPaymentMethod: deal.paymentMethod.value } : {}),
     ...(deal.deliveryTerms ? { deliveryTerms: deal.deliveryTerms.value } : {}),
     paymentRoute: "PayPal Sandbox",
     materialPromises: deal.materialPromises.map((fact) => fact.value),
