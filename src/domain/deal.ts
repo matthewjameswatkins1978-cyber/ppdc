@@ -1,3 +1,5 @@
+import type { ResearchResult, ResearchRun } from "./research";
+
 export type EvidenceSource = "user" | "paypal" | "channel3" | "parallel" | "carrier";
 export type AssertionKind = "fact" | "paypal_rule" | "inference" | "unknown";
 export type FindingSeverity = "green" | "amber" | "red";
@@ -54,4 +56,7 @@ export interface Deal {
   evidenceRefs?: EvidenceReference[];
   findings: Finding[];
   conclusion?: string;
+  researchRuns?: ResearchRun[];
+  researchResults?: ResearchResult[];
+  researchQuestions?: string[];
 }
