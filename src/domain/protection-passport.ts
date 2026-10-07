@@ -1,4 +1,5 @@
 import type { Deal, EvidenceReference, Finding } from "./deal";
+import type { ResearchResult, ResearchRun } from "./research";
 
 export interface ProtectionPassport {
   id: string;
@@ -17,6 +18,8 @@ export interface ProtectionPassport {
   findings: Finding[];
   unresolvedUnknowns: string[];
   conclusion?: string;
+  researchRuns?: ResearchRun[];
+  researchResults?: ResearchResult[];
 }
 
 /** Build a point-in-time record after the server verifies a completed PayPal capture. */
@@ -45,5 +48,7 @@ export function createProtectionPassport(input: {
     findings: structuredClone(deal.findings),
     unresolvedUnknowns: deal.unknowns.map((fact) => fact.value),
     ...(deal.conclusion ? { conclusion: deal.conclusion } : {}),
+    researchRuns: structuredClone(deal.researchRuns ?? []),
+    researchResults: structuredClone(deal.researchResults ?? []),
   };
 }

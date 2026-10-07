@@ -15,6 +15,8 @@ export default function DealChecker() {
   const [loading, setLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [researchLoading, setResearchLoading] = useState(false);
+  const [researchError, setResearchError] = useState("");
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -84,6 +86,22 @@ export default function DealChecker() {
     }
   }
 
+  async function checkPublicContext(provider: "channel3" | "parallel", mode: "live" | "replay" = "live") {
+    if (!deal) return;
+    setResearchLoading(true); setResearchError("");
+    try {
+      const response = await fetch("/api/research", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deal, provider, mode }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Public research could not be started.");
+      setDeal(result.deal as Deal);
+    } catch (cause) {
+      setResearchError(cause instanceof Error ? cause.message : "Public research could not be completed.");
+    } finally { setResearchLoading(false); }
+  }
+
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: "32px 20px 64px", color: "#172b4d", fontFamily: "system-ui, sans-serif" }}>
       <header style={{ marginBottom: 28 }}>
@@ -128,12 +146,27 @@ export default function DealChecker() {
             </article>)}
           </div>
         </section>
+        <section aria-labelledby="research-title" style={{ border: "1px solid #d8dee8", borderRadius: 12, padding: 18, margin: "20px 0" }}>
+          <h2 id="research-title">Check public context</h2>
+          <p>These deliberate actions send only the evidence-backed product or model, condition and broad market to the selected provider. They do not send seller or buyer details. Live checks use provider credits and may incur charges if the account is not covered; replay uses local sample results and makes no external call.</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("channel3")}>Search product references</button>
+            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("parallel")}>Search broader public context</button>
+            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("channel3", "replay")}>Replay Channel3 sample</button>
+            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("parallel", "replay")}>Replay Parallel sample</button>
+          </div>
+          {researchLoading && <p role="status">Checking public context…</p>}
+          {researchError && <p role="alert" style={{ color: colors.red }}>{researchError}</p>}
+          {deal.researchQuestions?.length ? <div><h3>Questions worth asking</h3><ul>{deal.researchQuestions.map((question) => <li key={question}>{question}</li>)}</ul></div> : null}
+        </section>
         <section style={{ background: "#f2f6fa", borderRadius: 12, padding: 18, margin: "20px 0" }}>
           <h2>Whole-deal view</h2><p>{deal.conclusion}</p>
         </section>
         <details style={{ border: "1px solid #d8dee8", borderRadius: 12, padding: 16 }}>
           <summary style={{ cursor: "pointer", fontWeight: 700 }}>What I checked · evidence and provenance</summary>
-          <p>This assessment uses local text rules and local OCR only. No public listings, price references, seller identity, or payment eligibility were checked.</p>
+          <p>This assessment uses local text rules and local OCR. Public context is checked only when you request it. Seller identity and payment eligibility are not researched.</p>
+          {deal.researchRuns?.length ? <ol>{deal.researchRuns.map((run) => <li key={run.id}><strong>{run.provider}</strong> · {run.delivery} · {run.outcome} · “{run.safeQuery}” · checked {new Date(run.checkedAt).toLocaleString()}{run.retrievedAt ? ` · retrieved ${new Date(run.retrievedAt).toLocaleString()}` : ""}{run.message ? ` · ${run.message}` : ""}</li>)}</ol> : null}
+          {deal.researchResults?.length ? <ul>{deal.researchResults.map((result) => <li key={result.id}>{result.url ? <a href={result.url} target="_blank" rel="noreferrer">{result.title}</a> : result.title}{result.merchant ? ` — ${result.merchant}` : ""}{result.price ? ` — ${result.price.currency} ${result.price.amount}${result.price.condition ? ` (${result.price.condition})` : ""}` : ""}</li>)}</ul> : null}
           <ol>{deal.evidence.map((item) => <li key={item.id}><strong>{item.label}</strong> — {new Date(item.capturedAt).toLocaleString()} · {item.source === "user" ? "provided by you" : item.source}</li>)}</ol>
           {deal.evidenceRefs?.length ? <ul>{deal.evidenceRefs.map((ref, index) => <li key={`${ref.evidenceId}-${ref.field}-${index}`}><strong>{ref.field}:</strong> “{ref.quote}” — {deal.evidence.find((item) => item.id === ref.evidenceId)?.label ?? "evidence"}</li>)}</ul> : <p>Fixture details are illustrative and do not represent a real listing.</p>}
           <p>Deal ID: <code>{deal.id}</code> · Saved in this browser only.</p>
