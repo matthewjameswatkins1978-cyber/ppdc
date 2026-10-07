@@ -29,3 +29,14 @@ The sandbox buyer's approval is a human decision. Do not substitute live credent
 ## Product scope
 
 The first demo uses a UK used-guitar deal, while the product is intended for consumer purchases broadly. Assessments use green, amber, and red findings with evidence and distinguish facts, PayPal rules, inferences, and unknowns. Price context is supporting evidence. Public search must receive sanitized queries, never private conversations or identifying details.
+
+## License
+
+PayPal Deal Checker is licensed under the **GNU Affero General Public License v3.0 only (AGPL-3.0-only)**.
+
+Copyright © 2026 Matthew Watkins.
+
+The public AGPL licence allows anyone to use, study, modify, and redistribute the covered code under its terms. Modified versions offered to users over a network are subject to the AGPL's corresponding-source requirements.
+
+Alternative commercial licensing may be available by separate agreement with the copyright holder.
+
