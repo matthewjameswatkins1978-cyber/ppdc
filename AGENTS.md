@@ -1,9 +1,13 @@
 # Local developer tools
 
-Before declaring an installed local developer tool unavailable, run:
+Local developer tools are exposed through `D:\AgentTools` and should normally already be on PATH.
 
-```powershell
-& "D:\AgentTools\bootstrap-project.ps1"
-```
+Before declaring a local tool unavailable:
 
-Consult `D:\AgentTools\capability-report.json`. Do not infer that a tool is absent merely because the initial shell PATH cannot find it. Run `& ".\scripts\use-agent-tools.ps1"` to prepare this project shell.
+1. Consult `D:\AgentTools\capability-report.json`.
+2. If the report is stale or inconsistent, run `D:\AgentTools\refresh-agent-tools.ps1`.
+3. Only then report the tool unavailable.
+
+Do not run `bootstrap-project.ps1` at every session; it is primarily a diagnostic and manual verification command.
+
+
