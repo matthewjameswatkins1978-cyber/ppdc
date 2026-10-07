@@ -1,0 +1,78 @@
+{
+  "scenarioId": "repaired-guitar",
+  "synthetic": true,
+  "title": "A bargain becomes more explainable",
+  "category": "used electro-acoustic guitar",
+  "marketContext": {
+    "currency": "GBP",
+    "askingPrice": 155,
+    "note": "Illustrative only; comparable values depend on exact model, repair, setup, and accessories."
+  },
+  "initial": {
+    "item": "Tanglewood Winterleaf TW4-style guitar; exact variant unclear",
+    "condition": "Used; brief good-condition claim, no repair history",
+    "payment": "Goods & Services purchase payment",
+    "delivery": "Tracked courier proposed",
+    "unknowns": [
+      "Headstock repair history",
+      "Tuning stability",
+      "Exact variant",
+      "Comparable value"
+    ],
+    "evidenceRefs": [
+      "b-listing"
+    ],
+    "signals": [
+      "Low price is a question, not proof of bargain",
+      "Condition and model need clarification"
+    ]
+  },
+  "turns": [
+    {
+      "id": "b-repair-disclosed",
+      "evidence": [
+        {
+          "id": "b-repair",
+          "source": "seller-message",
+          "text": "Seller says headstock was professionally repaired after a fall and is stable."
+        },
+        {
+          "id": "b-photos",
+          "source": "seller-message",
+          "text": "Seller supplies current repair and neck close-ups."
+        },
+        {
+          "id": "b-variant",
+          "source": "seller-message",
+          "text": "Seller confirms variant; no case included."
+        }
+      ],
+      "state": {
+        "item": "TW4 electro-acoustic guitar; variant seller-reported",
+        "condition": "Disclosed repaired headstock; stability not independently verified",
+        "payment": "Goods & Services purchase payment",
+        "delivery": "Tracked courier; confirm safe packing",
+        "unknowns": [
+          "Neck stability",
+          "Tuning and electronics",
+          "Independent inspection"
+        ],
+        "evidenceRefs": [
+          "b-listing",
+          "b-repair",
+          "b-photos",
+          "b-variant"
+        ],
+        "signals": [
+          "Specific seller-reported evidence replaces vague unknown",
+          "Repair could explain price, not prove value or quality"
+        ]
+      }
+    }
+  ],
+  "expectedDemonstration": [
+    "Show evidence changing the explanation.",
+    "Keep seller claims separate from verification.",
+    "Do not call it a scam or a guaranteed bargain."
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "scenarioId": "conflicting-console",
+  "synthetic": true,
+  "title": "Pause when details conflict",
+  "category": "used games console",
+  "marketContext": {
+    "currency": "GBP",
+    "askingPrice": 180,
+    "note": "Synthetic illustrative price, not current market evidence."
+  },
+  "initial": {
+    "item": "PS5 Slim listed as Digital Edition",
+    "condition": "Used; seller says working; exact-item photos unconfirmed",
+    "payment": "Goods & Services initially shown",
+    "delivery": "Tracked delivery mentioned, details unspecified",
+    "unknowns": [
+      "Exact model",
+      "Whether photos show item",
+      "Ordinary explanation for price"
+    ],
+    "evidenceRefs": [
+      "c-listing",
+      "c-payment"
+    ],
+    "signals": [
+      "Verify low illustrative price with comparables",
+      "Confirm exact item identity"
+    ]
+  },
+  "turns": [
+    {
+      "id": "c-conflict-and-payment-switch",
+      "evidence": [
+        {
+          "id": "c-model",
+          "source": "seller-message",
+          "text": "Seller calls it Disc Edition, conflicting with listing's Digital Edition."
+        },
+        {
+          "id": "c-payment-request",
+          "source": "seller-message",
+          "text": "Seller asks to switch to Friends & Family and decide quickly."
+        },
+        {
+          "id": "c-photo",
+          "source": "buyer-observation",
+          "text": "Buyer requests current item photo; no reply is included."
+        }
+      ],
+      "state": {
+        "item": "Unresolved: listing says Digital; message says Disc",
+        "condition": "Seller says working; exact item unverified",
+        "payment": "Seller requests Friends & Family for purchase",
+        "delivery": "Tracked mentioned, details unspecified",
+        "unknowns": [
+          "Actual model",
+          "Whether item matches description",
+          "Suitable payment accepted"
+        ],
+        "evidenceRefs": [
+          "c-listing",
+          "c-payment",
+          "c-model",
+          "c-payment-request",
+          "c-photo"
+        ],
+        "signals": [
+          "RED: Friends & Family is not for purchases; do not pay that way",
+          "RED: material model contradiction",
+          "AMBER: no current item-specific photo",
+          "Low price does not prove intent"
+        ]
+      }
+    }
+  ],
+  "expectedDemonstration": [
+    "Separate payment request and model contradiction.",
+    "Pause until item and appropriate payment route are resolved.",
+    "Describe caution without accusing seller."
+  ]
+}

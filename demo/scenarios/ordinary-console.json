@@ -1,0 +1,71 @@
+{
+  "scenarioId": "ordinary-console",
+  "synthetic": true,
+  "title": "A coherent used console deal",
+  "category": "used games console",
+  "marketContext": {
+    "currency": "GBP",
+    "askingPrice": 300,
+    "note": "Illustrative only; used prices vary by model, bundle, condition, and delivery."
+  },
+  "initial": {
+    "item": "PS5 Slim Disc Edition with controller and power lead",
+    "condition": "Used; seller says working and notes light case wear",
+    "payment": "Goods & Services purchase payment",
+    "delivery": "Tracked delivery proposed; details unconfirmed",
+    "unknowns": [
+      "Return terms",
+      "Whether photos show this exact unit"
+    ],
+    "evidenceRefs": [
+      "a-listing",
+      "a-payment"
+    ],
+    "signals": [
+      "Clear model and included items",
+      "Confirm current item-specific photos and dispatch"
+    ]
+  },
+  "turns": [
+    {
+      "id": "a-current-photos",
+      "evidence": [
+        {
+          "id": "a-photos",
+          "source": "seller-message",
+          "text": "Seller supplies current photos of console, ports, controller, and lead."
+        },
+        {
+          "id": "a-tracking",
+          "source": "seller-message",
+          "text": "Seller agrees to share tracked dispatch confirmation."
+        }
+      ],
+      "state": {
+        "item": "PS5 Slim Disc Edition with controller and power lead",
+        "condition": "Seller reports working; no independent function test",
+        "payment": "Goods & Services purchase payment",
+        "delivery": "Tracked; dispatch confirmation agreed, terms need checking",
+        "unknowns": [
+          "Return terms",
+          "Independent function check"
+        ],
+        "evidenceRefs": [
+          "a-listing",
+          "a-payment",
+          "a-photos",
+          "a-tracking"
+        ],
+        "signals": [
+          "Description and current photos are consistent",
+          "Seller statement does not prove operation"
+        ]
+      }
+    }
+  ],
+  "expectedDemonstration": [
+    "Separate facts from unknowns.",
+    "Show a calmer but not risk-free assessment.",
+    "Check current protection terms."
+  ]
+}
