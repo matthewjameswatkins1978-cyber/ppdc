@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PPDC demo scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenarioId",
+    "synthetic",
+    "title",
+    "category",
+    "marketContext",
+    "initial",
+    "turns",
+    "expectedDemonstration"
+  ],
+  "properties": {
+    "scenarioId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "synthetic": {
+      "const": true
+    },
+    "title": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "marketContext": {
+      "type": "object",
+      "required": [
+        "currency",
+        "askingPrice",
+        "note"
+      ],
+      "properties": {
+        "currency": {
+          "const": "GBP"
+        },
+        "askingPrice": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "initial": {
+      "$ref": "#/$defs/state"
+    },
+    "turns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "evidence",
+          "state"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/evidence"
+            }
+          },
+          "state": {
+            "$ref": "#/$defs/state"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expectedDemonstration": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": [
+        "id",
+        "source",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "source": {
+          "enum": [
+            "listing-summary",
+            "seller-message",
+            "buyer-observation"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "state": {
+      "type": "object",
+      "required": [
+        "item",
+        "condition",
+        "payment",
+        "delivery",
+        "unknowns",
+        "evidenceRefs",
+        "signals"
+      ],
+      "properties": {
+        "item": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "payment": {
+          "type": "string"
+        },
+        "delivery": {
+          "type": "string"
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          }
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

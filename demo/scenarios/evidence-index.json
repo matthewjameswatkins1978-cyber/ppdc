@@ -1,0 +1,41 @@
+{
+  "description": "Initial evidence used by the synthetic demo fixtures. Statements describe scenario setup, not actual listings.",
+  "records": [
+    {
+      "id": "a-listing",
+      "scenarioId": "ordinary-console",
+      "source": "listing-summary",
+      "text": "Synthetic listing summary names a used PS5 Slim Disc Edition, controller, power lead, seller-reported working state, and light case wear."
+    },
+    {
+      "id": "a-payment",
+      "scenarioId": "ordinary-console",
+      "source": "listing-summary",
+      "text": "Synthetic listing presents a Goods & Services purchase payment route."
+    },
+    {
+      "id": "b-listing",
+      "scenarioId": "repaired-guitar",
+      "source": "listing-summary",
+      "text": "Synthetic listing summary says used guitar is in good condition, without repair history or exact variant."
+    },
+    {
+      "id": "c-listing",
+      "scenarioId": "conflicting-console",
+      "source": "listing-summary",
+      "text": "Synthetic listing names a PS5 Slim Digital Edition."
+    },
+    {
+      "id": "c-payment",
+      "scenarioId": "conflicting-console",
+      "source": "listing-summary",
+      "text": "Synthetic listing initially presents Goods & Services purchase payment."
+    },
+    {
+      "id": "c-price",
+      "scenarioId": "conflicting-console",
+      "source": "buyer-observation",
+      "text": "Synthetic asking price is an illustrative input only, not a current comparable."
+    }
+  ]
+}
