@@ -3,11 +3,14 @@ import type { Deal, Finding } from "./deal";
 /** First-party questions are a presentation aid derived from current unknowns and research. */
 export function questionsFor(deal: Deal): string[] {
   const candidates = deal.researchQuestions?.length ? [...deal.researchQuestions] : [];
-  if (deal.paymentMethod && /friends\s*(?:&|and)\s*family/i.test(deal.paymentMethod.value)) candidates.push("Will you accept PayPal Goods & Services for this item purchase?");
+  const hasFriendsFamilyPaymentConflict = deal.unknowns.some((fact) => fact.key === "conflict_payment method" && /friends\s*(?:&|and)\s*family/i.test(String(fact.value)));
+  if ((deal.paymentMethod && /friends\s*(?:&|and)\s*family/i.test(deal.paymentMethod.value)) || hasFriendsFamilyPaymentConflict) candidates.push("Will you accept PayPal Goods & Services for this item purchase?");
   if (!deal.condition) candidates.push("Can you describe the item's condition and any repairs?");
   if (!deal.deliveryTerms) candidates.push("How will the item be delivered or collected, and will delivery be tracked?");
   if (!deal.paymentMethod) candidates.push("Which payment method is being requested for this purchase?");
   if (deal.unknowns.some((fact) => /price/i.test(`${fact.key} ${fact.value}`))) candidates.push("Can you explain how the asking price was set?");
+  if (deal.unknowns.some((fact) => /repair|headstock|tuning/i.test(`${fact.key} ${fact.value}`))) candidates.push("Can you share current close-up photos of the repair and explain whether it affects tuning or stability?");
+  if (deal.unknowns.some((fact) => /current photo.*not shown|current photos? unavailable/i.test(String(fact.value)))) candidates.push("Can you share a current photo showing the exact item and model label?");
   for (const conflict of deal.unknowns.filter((fact) => fact.key.startsWith("conflict_"))) candidates.push(`Can you confirm the agreed ${conflict.key.slice("conflict_".length)}?`);
   return [...new Set(candidates)].slice(0, 4);
 }
