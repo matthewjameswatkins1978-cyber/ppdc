@@ -32,3 +32,14 @@ Updated 2026-10-07. The local Next.js/TypeScript foundation and schema-validated
 - Protection Passport creation is a Phase 2 item in PPDC-001 and is not a Phase 0 exit criterion.
 
 No production PayPal payment was made and no service was deployed. The single Sandbox order was captured as recorded above.
+
+## PPDC-001 Phase 1 verification
+
+- [x] Text intake and evidence-grounded deterministic Deal assessment
+- [x] Screenshot upload through the Next.js route and local Tesseract OCR
+- [x] Green/amber/red findings, plain-language conclusion, and provenance view
+- [x] Add-evidence updates the same Deal; conflicting facts retain both sources
+- [x] Fixture replay uses no model, search, or PayPal API calls
+- [x] Browser-local persistence survives page reload
+- [x] 24 tests, TypeScript, production build, OCR smoke, npm audit, diff check, and credential-pattern scan passed
+- No live Gemini or search calls were made for Phase 1. No payment flow or Passport is wired into the application yet.
