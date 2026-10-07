@@ -1,0 +1,48 @@
+{
+  "name": "paypal-dc",
+  "version": "1.0.0",
+  "description": "A human-led deal assessment and PayPal Sandbox checkout prototype.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node --conditions=react-server --import tsx --test \"src/**/*.test.ts\"",
+    "paypal:smoke": "node --conditions=react-server --import tsx scripts/paypal-sandbox-smoke.ts",
+    "research:smoke": "node --conditions=react-server --import tsx scripts/research-smoke.ts",
+    "ocr:smoke": "node --conditions=react-server --import tsx scripts/ocr-smoke.ts",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthewjameswatkins1978-cyber/ppdc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/matthewjameswatkins1978-cyber/ppdc/issues"
+  },
+  "homepage": "https://github.com/matthewjameswatkins1978-cyber/ppdc#readme",
+  "dependencies": {
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1",
+    "tesseract.js": "^7.0.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "dotenv": "^18.0.6",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  },
+  "private": true
+}
