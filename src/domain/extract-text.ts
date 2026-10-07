@@ -2,11 +2,11 @@ import type { Evidence } from "./deal";
 import { extractionToDeal, type DealExtraction, validateDealExtraction } from "./deal-extraction";
 
 /** A local, no-network baseline extractor. It makes no claims beyond text it can quote. */
-export function extractDealFromText(text: string, dealId = "text-intake", evidenceLabel = "User-supplied listing text") {
+export function extractDealFromText(text: string, dealId = "text-intake", evidenceLabel = "User-supplied listing text", evidenceId = "user-input") {
   const sourceText = text.trim();
   const extraction = validateDealExtraction(extractLocally(sourceText), sourceText);
   const evidence: Evidence = {
-    id: "user-input", source: "user", label: evidenceLabel,
+    id: evidenceId, source: "user", label: evidenceLabel,
     capturedAt: new Date().toISOString(), private: true,
   };
   return extractionToDeal({ extraction, evidence, dealId });
