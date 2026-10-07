@@ -42,4 +42,14 @@ No production PayPal payment was made and no service was deployed. The single Sa
 - [x] Fixture replay uses no model, search, or PayPal API calls
 - [x] Browser-local persistence survives page reload
 - [x] 24 tests, TypeScript, production build, OCR smoke, npm audit, diff check, and credential-pattern scan passed
-- No live Gemini or search calls were made for Phase 1. No payment flow or Passport is wired into the application yet.
+- No live Gemini or search calls were made for Phase 1. At that Phase 1 checkpoint no payment flow or Passport was wired into the application; see the Phase 2 implementation checkpoint below.
+
+## PPDC-001 Phase 2 checkout implementation checkpoint
+- [x] Explicit Continue UI shows the exact GBP Sandbox amount and is the only UI action that starts checkout.
+- [x] Server persists human authorization before creating a Sandbox order and reuses stable PayPal request IDs on retry.
+- [x] PayPal return and cancel routes are part of the Next.js app; URL parameters never count as payment proof.
+- [x] Return handler makes a fresh PayPal read, captures only APPROVED orders, and requires a fresh COMPLETED capture with the expected GBP amount before creating a Passport.
+- [x] Protection Passport snapshots the Deal, material promises, evidence references, findings, unresolved unknowns, conclusion, order ID, price, and timestamp.
+- [x] SQLite persistence survives reopening; 36 tests, TypeScript, and production build pass.
+- [x] Matthew approved the existing Sandbox order. Server-side return handling verified the order and capture as COMPLETED and created the Protection Passport; a second fresh app return check returned the Passport page.
+- [x] No new order was created to recover from the browser redirect issue. Known issue: PayPal approval redirected to localhost but the browser showed `ERR_CONNECTION_REFUSED`; after the local app was available, re-opening the existing order's return URL completed server verification successfully.
