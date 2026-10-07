@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Deal } from "@/domain/deal";
+import type { Deal, Finding } from "@/domain/deal";
 import { assessDeal } from "@/domain/assessment";
 import { dealFixtures } from "@/domain/fixtures";
+import { beforePayFor, changedFacts, evidenceToKeep, formatQuestions, questionsFor } from "@/domain/presentation";
 
 const STORAGE_KEY = "ppdc.phase1.deals";
-const colors = { green: "#18794e", amber: "#946200", red: "#b42318" } as const;
-
 export default function DealChecker() {
   const [deal, setDeal] = useState<Deal | null>(null);
   const [text, setText] = useState("");
@@ -18,6 +17,7 @@ export default function DealChecker() {
   const [researchLoading, setResearchLoading] = useState(false);
   const [researchError, setResearchError] = useState("");
   const [error, setError] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,6 @@ export default function DealChecker() {
     } catch { localStorage.removeItem(STORAGE_KEY); }
     setSaved(true);
   }, []);
-
   useEffect(() => {
     if (!saved || !deal) return;
     try {
@@ -43,143 +42,68 @@ export default function DealChecker() {
     amber: deal?.findings.filter((item) => item.severity === "amber").length ?? 0,
     red: deal?.findings.filter((item) => item.severity === "red").length ?? 0,
   }), [deal]);
+  const questions = deal ? questionsFor(deal) : [];
+  const conclusion = deal?.conclusion && deal.researchResults?.length
+    ? deal.conclusion.replace("No public price or seller checks have been run.", `Public context recorded ${deal.researchResults.length} reference(s); compare variants and condition before drawing a price conclusion.`)
+    : deal?.conclusion;
 
   async function submitEvidence(event: React.FormEvent) {
-    event.preventDefault();
-    setLoading(true); setError("");
+    event.preventDefault(); setLoading(true); setError("");
     try {
-      const form = new FormData();
-      if (text.trim()) form.set("text", text);
-      if (image) form.set("image", image);
+      const form = new FormData(); if (text.trim()) form.set("text", text); if (image) form.set("image", image);
       if (deal) form.set("existingDeal", JSON.stringify(deal));
-      const response = await fetch("/api/deals", { method: "POST", body: form });
-      const result = await response.json();
+      const response = await fetch("/api/deals", { method: "POST", body: form }); const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? "Unable to assess this evidence.");
       setDeal(result.deal); setText(""); setImage(null);
-      const input = document.querySelector<HTMLInputElement>("#deal-image");
-      if (input) input.value = "";
+      const input = document.querySelector<HTMLInputElement>("#deal-image"); if (input) input.value = "";
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to assess this evidence."); }
     finally { setLoading(false); }
   }
-
-  function loadFixture(fixture: Deal) {
-    setError("");
-    setDeal(assessDeal(structuredClone(fixture)));
+  function loadFixture(fixture: Deal) { setError(""); setDeal(assessDeal(structuredClone(fixture))); }
+  async function copyQuestions() {
+    try { await navigator.clipboard.writeText(formatQuestions(questions)); setCopyStatus("Questions copied. Paste them wherever you choose."); }
+    catch { setCopyStatus("Copy was unavailable. Select and copy the questions above."); }
   }
-
   async function continueToSandboxPayment() {
-    if (!deal) return;
-    setCheckoutLoading(true);
-    setCheckoutError("");
+    if (!deal) return; setCheckoutLoading(true); setCheckoutError("");
     try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deal, actionId: crypto.randomUUID() }),
-      });
+      const response = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ deal, actionId: crypto.randomUUID() }) });
       const result = await response.json() as { approvalUrl?: string; error?: string };
       if (!response.ok || !result.approvalUrl) throw new Error(result.error ?? "PayPal Sandbox did not return an approval link.");
       window.location.assign(result.approvalUrl);
-    } catch (cause) {
-      setCheckoutError(cause instanceof Error ? cause.message : "PayPal Sandbox checkout could not be started.");
-      setCheckoutLoading(false);
-    }
+    } catch (cause) { setCheckoutError(cause instanceof Error ? cause.message : "PayPal Sandbox checkout could not be started."); setCheckoutLoading(false); }
   }
-
   async function checkPublicContext(provider: "channel3" | "parallel", mode: "live" | "replay" = "live") {
-    if (!deal) return;
-    setResearchLoading(true); setResearchError("");
+    if (!deal) return; setResearchLoading(true); setResearchError("");
     try {
-      const response = await fetch("/api/research", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deal, provider, mode }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error ?? "Public research could not be started.");
-      setDeal(result.deal as Deal);
-    } catch (cause) {
-      setResearchError(cause instanceof Error ? cause.message : "Public research could not be completed.");
-    } finally { setResearchLoading(false); }
+      const response = await fetch("/api/research", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ deal, provider, mode }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error ?? "Public research could not be started."); setDeal(result.deal as Deal);
+    } catch (cause) { setResearchError(cause instanceof Error ? cause.message : "Public research could not be completed."); }
+    finally { setResearchLoading(false); }
   }
+  const fixtureName = (id: string) => ({ "friends-family-request": "Friends & Family request", "unexplained-low-price": "Unclear bargain", "coherent-used-guitar": "Clear used guitar", "recipient-changed": "Recipient changed" }[id] ?? "Damaged guitar");
+  const severityText = (severity: Finding["severity"]) => ({ green: "✓ CLEAR", amber: "! TO CLARIFY", red: "● CONCRETE CONCERN" }[severity]);
 
-  return (
-    <main style={{ maxWidth: 980, margin: "0 auto", padding: "32px 20px 64px", color: "#172b4d", fontFamily: "system-ui, sans-serif" }}>
-      <header style={{ marginBottom: 28 }}>
-        <p style={{ color: "#176b87", fontWeight: 700, letterSpacing: 1 }}>PAYPAL DEAL CHECKER · SANDBOX CHECKOUT</p>
-        <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", margin: "8px 0" }}>Understand the deal before you pay.</h1>
-        <p style={{ fontSize: 18, maxWidth: 700 }}>See what is clear, what needs a question, and what raises a concrete concern. You decide what to do next.</p>
-        <p role="status" style={{ display: "inline-block", background: "#e8f4f7", padding: "8px 12px", borderRadius: 8 }}>Local assessment · no live AI or search calls</p>
-      </header>
-
-      <section style={{ border: "1px solid #d8dee8", borderRadius: 14, padding: 20, marginBottom: 20 }}>
-        <h2>{deal ? "Add evidence to this deal" : "Start with the listing or message"}</h2>
-        {deal && <button type="button" onClick={() => { setDeal(null); setText(""); setImage(null); setError(""); }}>Start a new deal</button>}
-        <form onSubmit={submitEvidence}>
-          <label htmlFor="deal-text">Paste listing text, seller messages, or agreed terms</label>
-          <textarea id="deal-text" value={text} onChange={(event) => setText(event.target.value)} rows={6} style={{ display: "block", width: "100%", boxSizing: "border-box", margin: "8px 0 16px", padding: 12, border: "1px solid #8993a4", borderRadius: 8, font: "inherit" }} placeholder="For sale: Fender Player Telecaster. Used, good condition. £450. PayPal Goods & Services. Tracked postage..." />
-          <label htmlFor="deal-image">Or add a screenshot/photo (JPEG, PNG or WebP; up to 8 MB)</label>
-          <input id="deal-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setImage(event.target.files?.[0] ?? null)} style={{ display: "block", margin: "8px 0 16px" }} />
-          <button disabled={loading || (!text.trim() && !image)} style={{ background: "#075985", color: "white", padding: "11px 18px", border: 0, borderRadius: 8, font: "inherit", fontWeight: 700, cursor: "pointer" }}>{loading ? "Checking evidence…" : deal ? "Update this deal" : "Assess this deal"}</button>
-        </form>
-        {error && <p role="alert" style={{ color: colors.red }}>{error}</p>}
-      </section>
-
-      <section aria-labelledby="fixtures-title" style={{ marginBottom: 28 }}>
-        <h2 id="fixtures-title">Replay a sample · no external calls</h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {dealFixtures.map((fixture) => <button key={fixture.id} onClick={() => loadFixture(fixture)} style={{ padding: "9px 12px", border: "1px solid #8993a4", borderRadius: 8, background: "white", cursor: "pointer" }}>{fixture.id === "friends-family-request" ? "Friends & Family request" : fixture.id === "unexplained-low-price" ? "Unclear bargain" : fixture.id === "coherent-used-guitar" ? "Clear used guitar" : fixture.id === "recipient-changed" ? "Recipient changed" : "Damaged guitar"}</button>)}
-        </div>
-      </section>
-
-      {deal && <>
-        <section aria-labelledby="assessment-title">
-          <h2 id="assessment-title">Deal Assessment</h2>
-          <p aria-label="Finding summary"><strong style={{ color: colors.green }}>● {counts.green} clear</strong>　<strong style={{ color: colors.amber }}>● {counts.amber} to clarify</strong>　<strong style={{ color: colors.red }}>● {counts.red} concrete concern</strong></p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12 }}>
-            {deal.findings.map((finding) => <article key={finding.id} style={{ border: `1px solid ${colors[finding.severity]}`, borderLeftWidth: 6, borderRadius: 10, padding: 14, background: "white" }}>
-              <p style={{ margin: "0 0 6px", color: colors[finding.severity], fontWeight: 700 }}>{finding.severity.toUpperCase()} · {finding.category}</p>
-              <h3 style={{ margin: "0 0 8px" }}>{finding.title}</h3>
-              <p>{finding.explanation}</p>
-              {finding.whyItMatters && <p><strong>Why it matters:</strong> {finding.whyItMatters}</p>}
-              {finding.recommendedAction && <p><strong>Consider:</strong> {finding.recommendedAction}</p>}
-              {finding.evidenceIds.length > 0 && <p><strong>Evidence:</strong> {finding.evidenceIds.map((id) => deal.evidence.find((item) => item.id === id)?.label ?? id).join(", ")}</p>}
-            </article>)}
-          </div>
-        </section>
-        <section aria-labelledby="research-title" style={{ border: "1px solid #d8dee8", borderRadius: 12, padding: 18, margin: "20px 0" }}>
-          <h2 id="research-title">Check public context</h2>
-          <p>These deliberate actions send only the evidence-backed product or model, condition and broad market to the selected provider. They do not send seller or buyer details. Live checks use provider credits and may incur charges if the account is not covered; replay uses local sample results and makes no external call.</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("channel3")}>Search product references</button>
-            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("parallel")}>Search broader public context</button>
-            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("channel3", "replay")}>Replay Channel3 sample</button>
-            <button type="button" disabled={researchLoading} onClick={() => checkPublicContext("parallel", "replay")}>Replay Parallel sample</button>
-          </div>
-          {researchLoading && <p role="status">Checking public context…</p>}
-          {researchError && <p role="alert" style={{ color: colors.red }}>{researchError}</p>}
-          {deal.researchQuestions?.length ? <div><h3>Questions worth asking</h3><ul>{deal.researchQuestions.map((question) => <li key={question}>{question}</li>)}</ul></div> : null}
-        </section>
-        <section style={{ background: "#f2f6fa", borderRadius: 12, padding: 18, margin: "20px 0" }}>
-          <h2>Whole-deal view</h2><p>{deal.conclusion}</p>
-        </section>
-        <details style={{ border: "1px solid #d8dee8", borderRadius: 12, padding: 16 }}>
-          <summary style={{ cursor: "pointer", fontWeight: 700 }}>What I checked · evidence and provenance</summary>
-          <p>This assessment uses local text rules and local OCR. Public context is checked only when you request it. Seller identity and payment eligibility are not researched.</p>
-          {deal.researchRuns?.length ? <ol>{deal.researchRuns.map((run) => <li key={run.id}><strong>{run.provider}</strong> · {run.delivery} · {run.outcome} · “{run.safeQuery}” · checked {new Date(run.checkedAt).toLocaleString()}{run.retrievedAt ? ` · retrieved ${new Date(run.retrievedAt).toLocaleString()}` : ""}{run.message ? ` · ${run.message}` : ""}</li>)}</ol> : null}
-          {deal.researchResults?.length ? <ul>{deal.researchResults.map((result) => <li key={result.id}>{result.url ? <a href={result.url} target="_blank" rel="noreferrer">{result.title}</a> : result.title}{result.merchant ? ` — ${result.merchant}` : ""}{result.price ? ` — ${result.price.currency} ${result.price.amount}${result.price.condition ? ` (${result.price.condition})` : ""}` : ""}</li>)}</ul> : null}
-          <ol>{deal.evidence.map((item) => <li key={item.id}><strong>{item.label}</strong> — {new Date(item.capturedAt).toLocaleString()} · {item.source === "user" ? "provided by you" : item.source}</li>)}</ol>
-          {deal.evidenceRefs?.length ? <ul>{deal.evidenceRefs.map((ref, index) => <li key={`${ref.evidenceId}-${ref.field}-${index}`}><strong>{ref.field}:</strong> “{ref.quote}” — {deal.evidence.find((item) => item.id === ref.evidenceId)?.label ?? "evidence"}</li>)}</ul> : <p>Fixture details are illustrative and do not represent a real listing.</p>}
-          <p>Deal ID: <code>{deal.id}</code> · Saved in this browser only.</p>
-        </details>
-        <section aria-labelledby="continue-title" style={{ border: "1px solid #d8dee8", borderRadius: 12, padding: 18, marginTop: 20 }}>
-          <h2 id="continue-title">Your decision</h2>
-          <p>Deal Checker does not decide whether you should buy. Review the evidence and findings above. If you choose to proceed, the next step opens PayPal Sandbox; this prototype does not use a real PayPal account or card.</p>
-          {deal.price && deal.currency?.value === "GBP" ? <><p><strong>Sandbox amount: {new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(deal.price.value)}</strong></p><button type="button" onClick={continueToSandboxPayment} disabled={checkoutLoading} style={{ background: "#075985", color: "white", padding: "11px 18px", border: 0, borderRadius: 8, font: "inherit", fontWeight: 700, cursor: checkoutLoading ? "wait" : "pointer" }}>{checkoutLoading ? "Opening PayPal Sandbox…" : `Continue to PayPal Sandbox for ${new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(deal.price.value)}`}</button></> : <p>PayPal Sandbox checkout needs a clear GBP price in the deal first.</p>}
-          {checkoutError && <p role="alert" style={{ color: colors.red }}>{checkoutError}</p>}
-          <p style={{ color: "#526174", fontSize: 14 }}>Continuing authorizes one Sandbox order for the stated amount. PayPal must still confirm approval and a completed capture before a Protection Passport is created.</p>
-        </section>
-      </>}
-      <footer style={{ marginTop: 28, color: "#526174" }}>Green, amber and red describe the evidence found, not whether a seller is trustworthy or fraudulent.</footer>
-    </main>
-  );
+  return <main className="shell">
+    <div className="masthead"><div className="brand">PAYPAL DEAL CHECKER</div><span className="local-tag">Sandbox demo · local assessment</span></div>
+    <header className="intro"><h1>Understand the deal before you pay.</h1><p>See what the evidence supports, what needs a question and what deserves attention. You decide what to do next.</p></header>
+    <div className="workspace">
+      <div className="stack">
+        {deal && <section className="panel" aria-labelledby="deal-summary"><h2 id="deal-summary">Deal at a glance</h2><div className="deal-summary"><div className="deal-name">{deal.item?.value ?? deal.model?.value ?? "Item not identified yet"}</div>{deal.price && deal.currency && <div className="price">{new Intl.NumberFormat("en-GB", { style: "currency", currency: deal.currency.value }).format(deal.price.value)}</div>}</div><div className="facts">{deal.model && <span className="fact-chip">Model: {deal.model.value}</span>}{deal.condition && <span className="fact-chip">{deal.condition.value}</span>}{deal.deliveryTerms && <span className="fact-chip">{deal.deliveryTerms.value}</span>}</div><p className="subtle">Summary from the evidence provided; seller statements have not been independently verified.</p></section>}
+        <section className="panel"><h2>{deal ? "Add information to this deal" : "Start with a listing or message"}</h2>{deal && <button className="secondary" type="button" onClick={() => { setDeal(null); setText(""); setImage(null); setError(""); }}>Start a new deal</button>}<form onSubmit={submitEvidence}><label htmlFor="deal-text">Listing text, seller messages or agreed terms</label><textarea id="deal-text" value={text} onChange={(event) => setText(event.target.value)} rows={5} placeholder="For sale: Fender Player Telecaster. Used, good condition. £450. Tracked postage…"/><label htmlFor="deal-image">Add a screenshot or photo (JPEG, PNG or WebP; up to 8 MB)</label><input id="deal-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setImage(event.target.files?.[0] ?? null)}/><button className="primary" disabled={loading || (!text.trim() && !image)}>{loading ? "Checking evidence…" : deal ? "Update this deal" : "Assess this deal"}</button></form>{error && <p role="alert" className="error">{error}</p>}</section>
+        <section className="panel" aria-labelledby="fixtures-title"><h2 id="fixtures-title">Replay a sample · no external calls</h2><div className="fixtures">{dealFixtures.map((fixture) => <button className="fixture" type="button" key={fixture.id} onClick={() => loadFixture(fixture)}>{fixtureName(fixture.id)}</button>)}</div></section>
+        {deal && <section className="panel"><h2>Evidence worth keeping</h2><p className="subtle">A practical record helps you remember what was agreed; it does not guarantee any outcome.</p><ul className="compact-list">{evidenceToKeep(deal).map((item) => <li key={item}>{item}</li>)}</ul></section>}
+      </div>
+      {deal ? <div className="stack">
+        <section className="panel conclusion"><h2>Whole-deal view</h2><p>{conclusion ?? "The available evidence is not enough to form a useful summary yet."}</p></section>
+        <section className="panel" aria-labelledby="assessment-title"><h2 id="assessment-title">Deal Assessment</h2><div className="count-row" aria-label="Finding summary"><span className="count green">✓ {counts.green} clear</span><span className="count amber">! {counts.amber} to clarify</span><span className="count red">● {counts.red} concern</span></div><div className="findings">{deal.findings.map((finding) => <article className={`finding ${finding.severity}`} key={finding.id}><p className="finding-label">{severityText(finding.severity)} · {finding.category}</p><h3>{finding.title}</h3><p>{finding.explanation}</p>{finding.whyItMatters && <p><strong>Why it matters:</strong> {finding.whyItMatters}</p>}{finding.recommendedAction && <p><strong>Consider:</strong> {finding.recommendedAction}</p>}{finding.evidenceIds.length > 0 && <p className="subtle">Evidence: {finding.evidenceIds.map((id) => deal.evidence.find((item) => item.id === id)?.label ?? id).join(", ")}</p>}</article>)}</div></section>
+        {changedFacts(deal).length > 0 && <section className="panel"><h2>What changed?</h2><p className="subtle">The evidence records different details. Compare the original sources; no reason is inferred.</p>{changedFacts(deal).map((change, index) => <div className="changed" key={`${change.field}-${index}`}><strong>{change.field}</strong><br/>{change.text}{change.sources.length > 0 && <div className="subtle">Sources: {change.sources.join(" · ")}</div>}</div>)}</section>}
+        <section className="panel"><h2>Questions worth asking</h2>{questions.length ? <><ul className="question-list">{questions.map((question) => <li key={question}>{question}</li>)}</ul><button type="button" className="secondary" onClick={copyQuestions}>Copy questions</button><span className="subtle" role="status" aria-live="polite"> {copyStatus}</span></> : <p className="subtle">No follow-up questions are currently recorded.</p>}</section>
+        <section className="panel"><h2>Check public context</h2><p className="subtle">Optional checks use provider credits and may incur charges if your account is not covered. Replay uses local sample results and makes no external call. Only product details are shared.</p><div className="button-row"><button className="secondary" type="button" disabled={researchLoading} onClick={() => checkPublicContext("channel3")}>Search product references</button><button className="secondary" type="button" disabled={researchLoading} onClick={() => checkPublicContext("parallel")}>Search public context</button><button className="secondary" type="button" disabled={researchLoading} onClick={() => checkPublicContext("channel3", "replay")}>Replay sample</button></div>{researchLoading && <p role="status">Checking public context…</p>}{researchError && <p role="alert" className="error">{researchError}</p>}{deal.researchResults?.length ? <p className="subtle">{deal.researchResults.length} public reference(s) recorded. They may describe different variants or conditions; compare the source details.</p> : null}</section>
+        <section className="panel"><h2>What I checked</h2><p className="subtle">Local rules reviewed the evidence you supplied. Public context runs only when requested. Seller identity and payment eligibility have not been verified.</p><details className="provenance"><summary>Show evidence and source details</summary><h3>Evidence you provided</h3><ul className="compact-list">{deal.evidence.map((item) => <li key={item.id}><strong>{item.label}</strong> · {new Date(item.capturedAt).toLocaleString("en-GB")} · {item.source === "user" ? "provided by you" : item.source}</li>)}</ul>{deal.evidenceRefs?.length ? <><h3>Evidence references</h3><ul className="compact-list">{deal.evidenceRefs.map((ref, index) => <li key={`${ref.evidenceId}-${index}`}><strong>{ref.field}:</strong> “{ref.quote}” — {deal.evidence.find((item) => item.id === ref.evidenceId)?.label ?? "evidence"}</li>)}</ul></> : null}{deal.researchRuns?.length ? <><h3>Public checks</h3><ul className="compact-list">{deal.researchRuns.map((run) => <li key={run.id}><strong>{run.provider}</strong> · {run.delivery} · {run.outcome} · “{run.safeQuery}” · checked {new Date(run.checkedAt).toLocaleString("en-GB")}</li>)}</ul></> : <p className="subtle">No public checks have been run.</p>}{deal.researchResults?.length ? <ul className="compact-list">{deal.researchResults.map((result) => <li key={result.id}>{result.url ? <a href={result.url} target="_blank" rel="noreferrer">{result.title}</a> : result.title}{result.merchant ? ` — ${result.merchant}` : ""}{result.price ? ` — ${result.price.currency} ${result.price.amount}${result.price.condition ? ` (${result.price.condition})` : ""}` : ""}</li>)}</ul> : null}<p className="subtle">Unknown or unverified: seller identity, independent item condition and payment eligibility. Deal ID: <code>{deal.id}</code>. Saved in this browser only.</p></details></section>
+        <section className="panel"><h2>Before you pay</h2><p className="subtle">Current assessment points to review before you decide.</p><ul className="compact-list">{beforePayFor(deal).map((finding) => <li key={finding.id}><strong>{severityText(finding.severity)}:</strong> {finding.title}</li>)}</ul>{!deal.findings.length && <p>No assessment findings are available yet.</p>}<div className="subsection"><h3>Your decision · PayPal Sandbox</h3><p className="subtle">This prototype opens Sandbox only. It does not charge a real PayPal account or card. Continuing is your explicit choice.</p>{deal.price && deal.currency?.value === "GBP" ? <><p><strong>Sandbox amount: {new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(deal.price.value)}</strong></p><button className="primary" type="button" onClick={continueToSandboxPayment} disabled={checkoutLoading}>{checkoutLoading ? "Opening PayPal Sandbox…" : "Continue with PayPal Sandbox"}</button></> : <p>Sandbox checkout needs a clear GBP price first.</p>}{checkoutError && <p role="alert" className="error">{checkoutError}</p>}<p className="subtle">A Protection Passport is created only after PayPal’s server API confirms a completed capture.</p></div></section>
+      </div> : <div className="stack"><section className="panel"><h2>Your assessment will appear here</h2><p className="subtle">Start with a listing, message or screenshot. You can replay samples without contacting a provider.</p></section></div>}
+    </div>
+    <footer>Green, amber and red describe the evidence found, not whether a seller is trustworthy or fraudulent. “Before you pay” is a review aid, not a decision.</footer>
+  </main>;
 }
