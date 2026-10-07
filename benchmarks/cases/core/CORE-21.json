@@ -1,0 +1,100 @@
+{
+  "id": "CORE-21",
+  "title": "Delivery terms change",
+  "locale": "en-GB",
+  "scenario_class": "deal_drift",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Tracked shipping agreed for used monitor. After price agreement, seller changes to untracked shipping. Goods and Services remains.",
+    "evidence": [
+      {
+        "id": "agreement",
+        "kind": "message",
+        "text": "Tracked shipping agreed.",
+        "private": false
+      },
+      {
+        "id": "change",
+        "kind": "message",
+        "text": "Seller changes to untracked shipping.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "delivery_initial",
+        "value": "tracked",
+        "kind": "fact",
+        "evidence_id": "agreement",
+        "required": true
+      },
+      {
+        "key": "delivery_later",
+        "value": "untracked",
+        "kind": "fact",
+        "evidence_id": "change",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Reason for change unknown"
+    ],
+    "findings": [
+      {
+        "category": "delivery_terms_changed",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber",
+          "red"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "agreed delivery term changed",
+          "confirm revised terms"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can tracked shipping remain in written agreement?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_terms",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

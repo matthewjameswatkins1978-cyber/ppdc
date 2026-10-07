@@ -1,0 +1,111 @@
+{
+  "id": "CORE-24",
+  "title": "Buyer Protection excluded category",
+  "locale": "en-GB",
+  "scenario_class": "protection_exclusion",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Used motor scooter £1,100 via Goods and Services. Seller says PayPal covers everything. Current UK terms list vehicles among excluded categories, subject to stated exceptions.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Used motor scooter £1,100; seller says coverage is guaranteed.",
+        "private": false
+      },
+      {
+        "id": "policy",
+        "kind": "paypal_policy",
+        "text": "UK terms list vehicles among excluded items.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "item_category",
+        "value": "motor vehicle",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "payment_method",
+        "value": "goods_and_services",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "vehicle_exclusion",
+        "value": "vehicles excluded subject to terms",
+        "kind": "paypal_rule",
+        "evidence_id": "policy",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Specific transaction eligibility requires checking current terms"
+    ],
+    "findings": [
+      {
+        "category": "protection_eligibility",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": "PAYPAL-UK-BUYER-PROTECTION",
+        "must_include_concepts": [
+          "Goods and Services does not make every transaction eligible",
+          "vehicle category exclusion applies subject to terms"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Do not rely on blanket coverage; check current UK terms for this transaction."
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "coverage has exclusions",
+        "no guarantee of reimbursement"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "verify_policy_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-BUYER-PROTECTION"
+  ]
+}

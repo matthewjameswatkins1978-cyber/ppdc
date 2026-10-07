@@ -1,0 +1,134 @@
+{
+  "id": "CORE-05",
+  "title": "Cheap repaired guitar",
+  "locale": "en-GB",
+  "scenario_class": "legitimate_bargain",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Fender Player Telecaster £280. Seller explains professionally repaired headstock after a fall; close-up repair photos supplied. Finish marks disclosed. Tracked and Goods and Services.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Fender Player Telecaster £280; professionally repaired headstock; tracked; Goods and Services.",
+        "private": false
+      },
+      {
+        "id": "repair",
+        "kind": "repair_photos",
+        "text": "Close-up repaired headstock and finish marks.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Fender Player Telecaster",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 280,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "condition",
+        "value": "professionally repaired headstock",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Repair workmanship not independently inspected"
+    ],
+    "findings": [
+      {
+        "category": "price_anomaly",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "below typical unrepaired examples",
+          "disclosed repair provides a plausible explanation"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      },
+      {
+        "category": "condition",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "repair is disclosed",
+          "independent inspection unavailable"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Would you like an independent inspection before deciding?"
+      ]
+    },
+    "research": {
+      "required": true,
+      "provider": "channel3",
+      "query_should_contain": [
+        "Fender Player Telecaster",
+        "used",
+        "UK"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "price concern softens with disclosed repair",
+        "no seller accusation"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "consider_inspection",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

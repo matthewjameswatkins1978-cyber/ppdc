@@ -1,0 +1,99 @@
+{
+  "id": "CORE-14",
+  "title": "Payment recipient changes",
+  "locale": "en-GB",
+  "scenario_class": "recipient_contradiction",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Agreed used Makita drill from fictional Rowan Test. Before payment, buyer is told to send money to M. Example without explanation.",
+    "evidence": [
+      {
+        "id": "agreement",
+        "kind": "message",
+        "text": "Rowan Test and buyer agreed drill purchase.",
+        "private": false
+      },
+      {
+        "id": "change",
+        "kind": "message",
+        "text": "Send payment to M. Example instead.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "recipient_initial",
+        "value": "Rowan Test",
+        "kind": "fact",
+        "evidence_id": "agreement",
+        "required": true
+      },
+      {
+        "key": "recipient_later",
+        "value": "M. Example",
+        "kind": "fact",
+        "evidence_id": "change",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Reason for change unknown"
+    ],
+    "findings": [
+      {
+        "category": "recipient_contradiction",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "recipient changed after agreement",
+          "new recipient authority not established"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Why did recipient change; can payment remain with agreed seller?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

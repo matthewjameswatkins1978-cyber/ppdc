@@ -1,0 +1,86 @@
+{
+  "id": "CORE-22",
+  "title": "Incomplete screenshot",
+  "locale": "en-GB",
+  "scenario_class": "incomplete_evidence",
+  "modalities": [
+    "image"
+  ],
+  "input": {
+    "deal_text": "Cropped screenshot: “MacBook Air M2 £420” and “I can post tomorrow”. Conversation ends are missing.",
+    "evidence": [
+      {
+        "id": "crop",
+        "kind": "image",
+        "text": "MacBook Air M2 £420; I can post tomorrow; cropped conversation.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "MacBook Air M2",
+        "kind": "fact",
+        "evidence_id": "crop",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 420,
+        "kind": "fact",
+        "evidence_id": "crop",
+        "required": true
+      },
+      {
+        "key": "delivery_promise",
+        "value": "post tomorrow",
+        "kind": "fact",
+        "evidence_id": "crop",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Currency unknown",
+      "condition unknown",
+      "payment unknown",
+      "tracking/carrier unknown",
+      "context missing"
+    ],
+    "findings": [],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Share full relevant conversation; confirm currency, condition, payment and tracked delivery."
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "request_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

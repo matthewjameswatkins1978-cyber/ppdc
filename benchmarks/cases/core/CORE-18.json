@@ -1,0 +1,112 @@
+{
+  "id": "CORE-18",
+  "title": "Urgency plus Friends & Family",
+  "locale": "en-GB",
+  "scenario_class": "compound_payment_risk",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "High-demand graphics card £180, far below ordinary price. Seller demands payment within 10 minutes using Friends and Family.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Graphics card £180, unusually low.",
+        "private": false
+      },
+      {
+        "id": "message",
+        "kind": "seller_message",
+        "text": "Pay within 10 minutes using Friends and Family.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "price",
+        "value": 180,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "urgency",
+        "value": "10 minutes",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      },
+      {
+        "key": "payment_method_requested",
+        "value": "friends_and_family",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Actual item unverified"
+    ],
+    "findings": [
+      {
+        "category": "payment_protection",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": "PAYPAL-UK-FF-PURCHASE",
+        "must_include_concepts": [
+          "Friends and Family purchase has no Buyer Protection",
+          "urgency and low price compound concern"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Do not use Friends and Family; ask for Goods and Services and item-specific evidence."
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "resolve payment before paying",
+        "combination does not prove intent"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-FF-PURCHASE",
+    "PAYPAL-UK-COMMON-SCAMS"
+  ]
+}

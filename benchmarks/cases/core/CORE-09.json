@@ -1,0 +1,118 @@
+{
+  "id": "CORE-09",
+  "title": "Cheap phone with vague condition",
+  "locale": "en-GB",
+  "scenario_class": "ambiguous_condition_and_price",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "iPhone 14 128GB £260. Seller says “works fine”; no close photos, battery health or repair history. Goods and Services and tracked delivery offered.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "iPhone 14 128GB £260; works fine; Goods and Services; tracked.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "iPhone 14 128GB",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 260,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Battery health unknown",
+      "repairs unknown",
+      "actual condition not shown"
+    ],
+    "findings": [
+      {
+        "category": "price_anomaly",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "unusually low price needs context"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      },
+      {
+        "category": "condition_unclear",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "condition and repair history are not established"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can the seller provide current photos, battery health and repair history?"
+      ]
+    },
+    "research": {
+      "required": true,
+      "provider": "channel3",
+      "query_should_contain": [
+        "iPhone 14 128GB",
+        "used",
+        "UK"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}
