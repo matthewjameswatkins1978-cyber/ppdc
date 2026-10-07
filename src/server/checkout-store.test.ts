@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { dealFixtures } from "@/domain/fixtures";
-import { createSqliteCheckoutStore } from "./checkout-store";
+import { createLazyCheckoutStore, createSqliteCheckoutStore } from "./checkout-store";
 
 test("SQLite checkout records survive reopening and can be found by PayPal order ID", async () => {
   const directory = mkdtempSync(join(tmpdir(), "ppdc-checkout-"));
@@ -31,4 +31,23 @@ test("SQLite checkout records survive reopening and can be found by PayPal order
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test("lazy checkout store opens once on first access, not module import", async () => {
+  let creations = 0;
+  const store = createLazyCheckoutStore(() => {
+    creations += 1;
+    return {
+      get: async () => undefined,
+      findByOrderId: async () => undefined,
+      save: async () => undefined,
+      close: () => undefined,
+    };
+  });
+  assert.equal(creations, 0);
+  assert.equal(await store.get("missing"), undefined);
+  assert.equal(creations, 1);
+  assert.equal(await store.get("missing"), undefined);
+  assert.equal(creations, 1);
+  store.close();
 });

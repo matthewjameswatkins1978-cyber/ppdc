@@ -53,4 +53,16 @@ export function createSqliteCheckoutStore(filename: string = STORE_PATH): Checko
   };
 }
 
-export const sqliteCheckoutStore = createSqliteCheckoutStore();
+/** Delay filesystem work until a request uses the store; Next.js imports route modules during builds. */
+export function createLazyCheckoutStore(createStore: () => CheckoutStore & { close(): void }): CheckoutStore & { close(): void } {
+  let store: (CheckoutStore & { close(): void }) | undefined;
+  const getStore = () => store ??= createStore();
+  return {
+    get: (dealId) => getStore().get(dealId),
+    findByOrderId: (orderId) => getStore().findByOrderId(orderId),
+    save: (record) => getStore().save(record),
+    close: () => store?.close(),
+  };
+}
+
+export const sqliteCheckoutStore = createLazyCheckoutStore(createSqliteCheckoutStore);
