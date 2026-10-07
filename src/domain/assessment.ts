@@ -27,8 +27,11 @@ export function assessDeal(deal: Deal): Deal {
     add({ severity: "amber", category: "delivery", title: "Delivery or collection is unclear", explanation: "No delivery or collection arrangement was established from the supplied evidence.", evidenceIds: [], ruleId: "delivery-unknown", kind: "unknown" });
   }
 
-  if (deal.paymentMethod && /friends\s*(?:&|and)\s*family/i.test(deal.paymentMethod.value)) {
-    add({ severity: "red", category: "payment", title: "Friends & Family is requested", explanation: "The supplied evidence asks for PayPal Friends & Family for a purchase. That payment type is not intended for buying goods and does not provide the same purchase protection as Goods & Services.", whyItMatters: "This can leave you without the purchase protections you may expect for an item purchase.", recommendedAction: "Do not use Friends & Family for this purchase. Ask for a suitable goods payment method and review the terms yourself.", evidenceIds: knownEvidence(deal.paymentMethod), ruleId: "friends-family-purchase", kind: "paypal_rule" });
+  const paymentConflicts = deal.unknowns.filter((fact) => fact.key === "conflict_payment method" && /friends\s*(?:&|and)\s*family/i.test(String(fact.value)));
+  const requestsFriendsFamily = Boolean(deal.paymentMethod && /friends\s*(?:&|and)\s*family/i.test(deal.paymentMethod.value)) || paymentConflicts.length > 0;
+  const paymentEvidenceIds = [...new Set([...knownEvidence(deal.paymentMethod), ...paymentConflicts.flatMap(({ evidenceIds }) => evidenceIds)])];
+  if (requestsFriendsFamily) {
+    add({ severity: "red", category: "payment", title: "Friends & Family is requested", explanation: "The supplied evidence asks for PayPal Friends & Family for a purchase. That payment type is not intended for buying goods and does not provide the same purchase protection as Goods & Services.", whyItMatters: "This can leave you without the purchase protections you may expect for an item purchase.", recommendedAction: "Do not use Friends & Family for this purchase. Ask for a suitable goods payment method and review the terms yourself.", evidenceIds: paymentEvidenceIds, ruleId: "friends-family-purchase", kind: "paypal_rule" });
   } else if (deal.paymentMethod) {
     add({ severity: "green", category: "payment", title: "A payment method is stated", explanation: `The supplied evidence states: ${deal.paymentMethod.value}. This checker has not verified the payment setup or protection eligibility.`, evidenceIds: knownEvidence(deal.paymentMethod), ruleId: "payment-stated", kind: "fact" });
   } else {
@@ -45,11 +48,14 @@ export function assessDeal(deal: Deal): Deal {
   const redCount = findings.filter(({ severity }) => severity === "red").length;
   const amberCount = findings.filter(({ severity }) => severity === "amber").length;
   const identity = deal.item?.value ?? deal.model?.value ?? "The item";
+  const hasRepairDisclosure = deal.materialPromises.some(({ value }) => /professionally repaired|headstock.{0,40}repaired|repaired after/i.test(value));
   const conclusion = redCount
     ? `${identity} is described in the supplied evidence, but there is a concrete payment-protection concern to resolve before deciding. The evidence does not establish whether the seller is trustworthy; review the payment request and terms yourself.`
-    : amberCount
-      ? `${identity} has some stated deal details, with ${amberCount} point${amberCount === 1 ? "" : "s"} still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding.`
-      : `${identity} has coherent stated terms in the evidence provided. This is not an independent verification of the item, seller, price, or payment protection; compare the details with what you expect before deciding.`;
+    : hasRepairDisclosure
+      ? `${identity}: the seller-reported repair could help explain the asking price, but repair quality, current stability, and value remain unverified.`
+      : amberCount
+        ? `${identity} has some stated deal details, with ${amberCount} point${amberCount === 1 ? "" : "s"} still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding.`
+        : `${identity} has coherent stated terms in the evidence provided. This is not an independent verification of the item, seller, price, or payment protection; compare the details with what you expect before deciding.`;
 
   return { ...deal, status: "ready_for_decision", findings, conclusion };
 }

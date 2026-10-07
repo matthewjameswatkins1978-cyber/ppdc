@@ -4,6 +4,7 @@ import type { Deal } from "@/domain/deal";
 import { beginSandboxCheckout } from "@/server/checkout-flow";
 import { sqliteCheckoutStore } from "@/server/checkout-store";
 import { createPayPalOrder, getPayPalOrder, capturePayPalOrder } from "@/server/paypal";
+import { getPublicOrigin } from "@/server/public-origin";
 
 export const runtime = "nodejs";
 
@@ -22,18 +23,10 @@ const dealSchema = z.object({
   conclusion: z.string().optional(),
 }).passthrough();
 
-function publicOrigin(): string {
-  const configured = process.env.PPDC_PUBLIC_ORIGIN ?? "http://localhost:3000";
-  const url = new URL(configured);
-  if (url.protocol !== "https:" && !(url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname))) {
-    throw new Error("PPDC_PUBLIC_ORIGIN must use HTTPS or a local loopback address.");
-  }
-  return url.origin;
-}
 
 export async function POST(request: Request) {
   try {
-    const origin = publicOrigin();
+    const origin = getPublicOrigin();
     if (request.headers.get("origin") !== origin) {
       return NextResponse.json({ error: "Checkout must be started from this Deal Checker page." }, { status: 403 });
     }

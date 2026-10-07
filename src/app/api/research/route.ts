@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import type { Deal } from "@/domain/deal";
 import { runResearch } from "@/server/research-service";
+import { getPublicOrigin } from "@/server/public-origin";
 
 export const runtime = "nodejs";
 
@@ -17,9 +18,8 @@ const dealSchema = z.object({
 }).passthrough();
 
 export async function POST(request: Request) {
-  const configuredOrigin = process.env.PPDC_PUBLIC_ORIGIN ?? "http://localhost:3000";
   let expectedOrigin: string;
-  try { expectedOrigin = new URL(configuredOrigin).origin; } catch { return NextResponse.json({ error: "Research origin is not configured." }, { status: 500 }); }
+  try { expectedOrigin = getPublicOrigin(); } catch { return NextResponse.json({ error: "Research origin is not configured." }, { status: 500 }); }
   if (request.headers.get("origin") !== expectedOrigin) return NextResponse.json({ error: "Research must be started from this Deal Checker page." }, { status: 403 });
   const parsed = z.object({ deal: dealSchema, provider: z.enum(["channel3", "parallel"]), mode: z.enum(["live", "replay"]).default("live") }).safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "The deal or research request is invalid." }, { status: 400 });

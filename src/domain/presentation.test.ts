@@ -33,6 +33,22 @@ test("What changed only displays recorded fact conflicts with their source label
   assert.ok(changes[0]?.sources.includes("Follow-up message"));
 });
 
+test("repair unknowns lead to a concrete photo and stability question", () => {
+  const deal = structuredClone(dealFixtures[0]);
+  deal.unknowns = [{ key: "repair_history", value: "Headstock repair history remains unclear", kind: "unknown", evidenceIds: ["listing"] }];
+  assert.ok(questionsFor(deal).some((question) => /close-up photos.*repair/i.test(question)));
+});
+test("payment and photo conflicts produce concrete clarification questions", () => {
+  const deal = structuredClone(dealFixtures[0]);
+  deal.paymentMethod = { key: "payment_method", value: "PayPal Goods & Services", kind: "fact", evidenceIds: ["listing"] };
+  deal.unknowns = [
+    { key: "conflict_payment method", value: "Evidence gives different payment method details: Goods & Services and Friends & Family", kind: "unknown", evidenceIds: ["listing", "follow-up"] },
+    { key: "photo", value: "Current photo not shown", kind: "unknown", evidenceIds: ["follow-up"] },
+  ];
+  const questions = questionsFor(deal);
+  assert.ok(questions.some((question) => question.includes("Goods & Services")));
+  assert.ok(questions.some((question) => question.includes("current photo")));
+});
 test("evidence guidance stays practical and specific to delivery information", () => {
   const deal = structuredClone(dealFixtures[0]);
   assert.ok(evidenceToKeep(deal).some((item) => item.includes("tracking")));
