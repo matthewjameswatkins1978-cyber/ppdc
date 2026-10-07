@@ -13,6 +13,8 @@ export default function DealChecker() {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -63,10 +65,29 @@ export default function DealChecker() {
     setDeal(assessDeal(structuredClone(fixture)));
   }
 
+  async function continueToSandboxPayment() {
+    if (!deal) return;
+    setCheckoutLoading(true);
+    setCheckoutError("");
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deal, actionId: crypto.randomUUID() }),
+      });
+      const result = await response.json() as { approvalUrl?: string; error?: string };
+      if (!response.ok || !result.approvalUrl) throw new Error(result.error ?? "PayPal Sandbox did not return an approval link.");
+      window.location.assign(result.approvalUrl);
+    } catch (cause) {
+      setCheckoutError(cause instanceof Error ? cause.message : "PayPal Sandbox checkout could not be started.");
+      setCheckoutLoading(false);
+    }
+  }
+
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: "32px 20px 64px", color: "#172b4d", fontFamily: "system-ui, sans-serif" }}>
       <header style={{ marginBottom: 28 }}>
-        <p style={{ color: "#176b87", fontWeight: 700, letterSpacing: 1 }}>PAYPAL DEAL CHECKER · PHASE 1</p>
+        <p style={{ color: "#176b87", fontWeight: 700, letterSpacing: 1 }}>PAYPAL DEAL CHECKER · SANDBOX CHECKOUT</p>
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", margin: "8px 0" }}>Understand the deal before you pay.</h1>
         <p style={{ fontSize: 18, maxWidth: 700 }}>See what is clear, what needs a question, and what raises a concrete concern. You decide what to do next.</p>
         <p role="status" style={{ display: "inline-block", background: "#e8f4f7", padding: "8px 12px", borderRadius: 8 }}>Local assessment · no live AI or search calls</p>
@@ -117,6 +138,13 @@ export default function DealChecker() {
           {deal.evidenceRefs?.length ? <ul>{deal.evidenceRefs.map((ref, index) => <li key={`${ref.evidenceId}-${ref.field}-${index}`}><strong>{ref.field}:</strong> “{ref.quote}” — {deal.evidence.find((item) => item.id === ref.evidenceId)?.label ?? "evidence"}</li>)}</ul> : <p>Fixture details are illustrative and do not represent a real listing.</p>}
           <p>Deal ID: <code>{deal.id}</code> · Saved in this browser only.</p>
         </details>
+        <section aria-labelledby="continue-title" style={{ border: "1px solid #d8dee8", borderRadius: 12, padding: 18, marginTop: 20 }}>
+          <h2 id="continue-title">Your decision</h2>
+          <p>Deal Checker does not decide whether you should buy. Review the evidence and findings above. If you choose to proceed, the next step opens PayPal Sandbox; this prototype does not use a real PayPal account or card.</p>
+          {deal.price && deal.currency?.value === "GBP" ? <><p><strong>Sandbox amount: {new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(deal.price.value)}</strong></p><button type="button" onClick={continueToSandboxPayment} disabled={checkoutLoading} style={{ background: "#075985", color: "white", padding: "11px 18px", border: 0, borderRadius: 8, font: "inherit", fontWeight: 700, cursor: checkoutLoading ? "wait" : "pointer" }}>{checkoutLoading ? "Opening PayPal Sandbox…" : `Continue to PayPal Sandbox for ${new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(deal.price.value)}`}</button></> : <p>PayPal Sandbox checkout needs a clear GBP price in the deal first.</p>}
+          {checkoutError && <p role="alert" style={{ color: colors.red }}>{checkoutError}</p>}
+          <p style={{ color: "#526174", fontSize: 14 }}>Continuing authorizes one Sandbox order for the stated amount. PayPal must still confirm approval and a completed capture before a Protection Passport is created.</p>
+        </section>
       </>}
       <footer style={{ marginTop: 28, color: "#526174" }}>Green, amber and red describe the evidence found, not whether a seller is trustworthy or fraudulent.</footer>
     </main>

@@ -1,13 +1,11 @@
 import "server-only";
+import type { PayPalCaptureOrder } from "@/domain/paypal-capture";
 
 const SANDBOX_API = "https://api-m.sandbox.paypal.com";
 
 interface OAuthResponse { access_token: string }
-export interface PayPalOrder {
-  id: string;
-  status: "CREATED" | "SAVED" | "APPROVED" | "VOIDED" | "COMPLETED" | string;
+export interface PayPalOrder extends PayPalCaptureOrder {
   links?: Array<{ href: string; rel: string; method: string }>;
-  purchase_units?: Array<{ payments?: { captures?: Array<{ id: string; status: string }> } }>;
 }
 
 function credentials() {
@@ -54,7 +52,15 @@ export async function createPayPalOrder(input: { amount: string; currency: "GBP"
     body: JSON.stringify({
       intent: "CAPTURE",
       purchase_units: [{ amount: { currency_code: input.currency, value: input.amount }, description: "PayPal Deal Checker Sandbox purchase" }],
-      application_context: { return_url: input.returnUrl, cancel_url: input.cancelUrl, user_action: "PAY_NOW" },
+      payment_source: {
+        paypal: {
+          experience_context: {
+            return_url: input.returnUrl,
+            cancel_url: input.cancelUrl,
+            user_action: "PAY_NOW",
+          },
+        },
+      },
     }),
   });
 }
