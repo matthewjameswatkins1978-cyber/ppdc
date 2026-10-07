@@ -1,0 +1,118 @@
+{
+  "id": "CORE-23",
+  "title": "Multilingual deal",
+  "locale": "en-GB",
+  "scenario_class": "multilingual_grounding",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "German: Gebrauchte Canon EOS R7, 900 Pfund. Kleine Kratzer am Gehäuse. Versand mit Sendungsverfolgung. Zahlung über PayPal Waren und Dienstleistungen.",
+    "evidence": [
+      {
+        "id": "message",
+        "kind": "seller_message",
+        "text": "Gebrauchte Canon EOS R7, 900 Pfund. Kleine Kratzer am Gehäuse. Versand mit Sendungsverfolgung. Zahlung über PayPal Waren und Dienstleistungen.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Canon EOS R7",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 900,
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      },
+      {
+        "key": "currency",
+        "value": "GBP",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      },
+      {
+        "key": "condition",
+        "value": "small housing scratches",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      },
+      {
+        "key": "delivery",
+        "value": "tracked shipping",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      },
+      {
+        "key": "payment_method_requested",
+        "value": "goods_and_services",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Return terms not stated"
+    ],
+    "findings": [
+      {
+        "category": "translation_grounding",
+        "required": true,
+        "expected_severity": "green",
+        "allowed_severities": [
+          "green"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "translation preserves source-supported terms"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": false,
+      "questions": []
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

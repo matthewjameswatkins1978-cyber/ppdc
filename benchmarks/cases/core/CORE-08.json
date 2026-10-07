@@ -1,0 +1,105 @@
+{
+  "id": "CORE-08",
+  "title": "Open-box clearance item",
+  "locale": "en-GB",
+  "scenario_class": "explained_bargain",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Dyson V12 Detect Slim £260, open-box clearance. Broken seal and accessories shown; 14-day return terms; secure marketplace checkout.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Dyson V12 £260; open-box; accessories listed; 14-day returns; marketplace checkout.",
+        "private": false
+      },
+      {
+        "id": "photos",
+        "kind": "actual_item_photos",
+        "text": "Open box and accessories.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Dyson V12 Detect Slim",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 260,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "condition",
+        "value": "open-box clearance",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Delivery date not stated"
+    ],
+    "findings": [
+      {
+        "category": "price_context",
+        "required": true,
+        "expected_severity": "green",
+        "allowed_severities": [
+          "green"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "open-box status explains price below new retail"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": false,
+      "questions": []
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

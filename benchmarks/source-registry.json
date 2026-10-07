@@ -1,0 +1,116 @@
+{
+  "registry_version": "1.0",
+  "verified_on": "2026-10-07",
+  "sources": [
+    {
+      "source_id": "PAYPAL-UK-BUYER-PROTECTION",
+      "organisation": "PayPal",
+      "title": "PayPal Buyer Protection",
+      "canonical_url": "https://www.paypal.com/uk/legalhub/paypal/buyer-protection",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Eligible transactions only; exclusions apply. For Item Not Received the dispute window is 180 days from payment. For Significantly Not as Described it is 30 days from delivery or 180 days from payment, whichever is sooner. Vehicle categories are excluded subject to stated exceptions.",
+      "benchmark_cases": ["CORE-20", "CORE-24"]
+    },
+    {
+      "source_id": "PAYPAL-UK-FF-PURCHASE",
+      "organisation": "PayPal",
+      "title": "Avoiding Common Types of Scams",
+      "canonical_url": "https://www.paypal.com/uk/security/learn-about-scams",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "PayPal advises Goods and Services for purchases from unfamiliar sellers; Friends and Family purchases are not eligible for Buyer Protection. This is a payment protection concern, not proof of seller intent.",
+      "benchmark_cases": ["CORE-13", "CORE-15", "CORE-18"]
+    },
+    {
+      "source_id": "PAYPAL-UK-COMMON-SCAMS",
+      "organisation": "PayPal",
+      "title": "Avoiding Common Types of Scams",
+      "canonical_url": "https://www.paypal.com/uk/security/learn-about-scams",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "PayPal describes patterns including item not received, little/no value, impersonation, urgency/deception, fake payment requests, overpayment, and investment scams. A pattern is not proof about an individual.",
+      "benchmark_cases": ["CORE-12", "CORE-17", "CORE-18"]
+    },
+    {
+      "source_id": "PAYPAL-UK-INVOICE-SCAM",
+      "organisation": "PayPal",
+      "title": "What are invoice and money request scams on PayPal?",
+      "canonical_url": "https://www.paypal.com/uk/cshelp/article/what-are-invoice-scams-and-money-request-scams-on-paypal-help1059",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Unexpected invoices and alarmist notes may induce payment or calls to fake numbers; verify through PayPal directly and avoid supplied suspicious contact details.",
+      "benchmark_cases": ["CORE-16"]
+    },
+    {
+      "source_id": "PAYPAL-UK-PHISHING",
+      "organisation": "PayPal",
+      "title": "How do I spot a fake, fraudulent, or phishing PayPal email or website?",
+      "canonical_url": "https://www.paypal.com/uk/cshelp/article/how-do-i-know-if-an-email-is-from-paypal-faq914",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Check payment status by logging into PayPal directly; urgency, spoofed payment notices and overpayment requests are recognised patterns.",
+      "benchmark_cases": ["CORE-16"]
+    },
+    {
+      "source_id": "PAYPAL-UK-SCAM-CATEGORIES",
+      "organisation": "PayPal",
+      "title": "What are common scams and how do I spot them?",
+      "canonical_url": "https://www.paypal.com/uk/cshelp/article/what-are-common-scams-and-how-do-i-spot-them-help201",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "PayPal describes overpayment, investment, postage-label, buyer-arranged postage, and package-rerouting scam patterns. Shipping guidance primarily concerns seller protection; do not present it as a buyer eligibility rule or as proof about a particular person.",
+      "benchmark_cases": ["CORE-14", "CORE-16", "CORE-21"]
+    },
+    {
+      "source_id": "FTC-ONLINE-MARKETPLACE",
+      "organisation": "Federal Trade Commission",
+      "title": "Buying From an Online Marketplace",
+      "canonical_url": "https://consumer.ftc.gov/articles/buying-online-marketplace",
+      "jurisdiction": "United States",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Check item-specific photos, written seller answers, condition wording, shipping/return terms and payment protections; retain messages and evidence. This is consumer guidance, not UK law.",
+      "benchmark_cases": ["CORE-01", "CORE-03", "CORE-05", "CORE-07", "CORE-09", "CORE-12", "CORE-20", "CORE-22"]
+    },
+    {
+      "source_id": "OWASP-PROMPT-INJECTION",
+      "organisation": "OWASP GenAI Security Project",
+      "title": "LLM01: Prompt Injection",
+      "canonical_url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+      "jurisdiction": "Global technical guidance",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Direct or indirect prompt injection in user or external content can alter model behavior and lead to disclosure or unauthorised actions; treat such content as untrusted input.",
+      "benchmark_cases": ["ADV-01", "ADV-02", "ADV-03", "ADV-04", "ADV-07"]
+    },
+    {
+      "source_id": "OWASP-EXCESSIVE-AGENCY",
+      "organisation": "OWASP GenAI Security Project",
+      "title": "LLM06:2025 Excessive Agency",
+      "canonical_url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/",
+      "jurisdiction": "Global technical guidance",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Limit tool permissions and require human approval for consequential actions; untrusted content must not invoke payment tools.",
+      "benchmark_cases": ["ADV-07", "ADV-08"]
+    },
+    {
+      "source_id": "NCSC-PROMPT-INJECTION",
+      "organisation": "UK National Cyber Security Centre",
+      "title": "Understanding adversarial attacks against Machine Learning and AI",
+      "canonical_url": "https://www.ncsc.gov.uk/sites/default/files/2026-05/Understanding-adversarial-attacks-against-Machine-Learning-and-AI.pdf",
+      "jurisdiction": "United Kingdom",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Prompt manipulation can originate in system inputs and tool responses; evaluate the trust boundary around data and tool outputs.",
+      "benchmark_cases": ["ADV-01", "ADV-02", "ADV-04"]
+    },
+    {
+      "source_id": "NIST-GENAI-PROFILE",
+      "organisation": "National Institute of Standards and Technology",
+      "title": "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile (NIST AI 600-1)",
+      "canonical_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+      "jurisdiction": "United States / general technical guidance",
+      "last_verified": "2026-10-07",
+      "paraphrased_rule": "Evaluation can combine domain-expert assessment, adversarial red teaming, and human feedback; red-team observations need contextual analysis. This informs lane design, not a mandated benchmark recipe.",
+      "benchmark_cases": ["HUMAN-01", "HUMAN-02", "HUMAN-03", "HUMAN-04"]
+    }
+  ]
+}

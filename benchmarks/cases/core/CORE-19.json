@@ -1,0 +1,99 @@
+{
+  "id": "CORE-19",
+  "title": "Serial number contradiction",
+  "locale": "en-GB",
+  "scenario_class": "item_contradiction",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Listing photo serial ends 4217; later photo of claimed same camera ends 9821; no explanation.",
+    "evidence": [
+      {
+        "id": "listing-photo",
+        "kind": "photo",
+        "text": "Serial ending 4217.",
+        "private": false
+      },
+      {
+        "id": "later-photo",
+        "kind": "photo",
+        "text": "Serial ending 9821.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "serial_listing",
+        "value": "4217",
+        "kind": "fact",
+        "evidence_id": "listing-photo",
+        "required": true
+      },
+      {
+        "key": "serial_later",
+        "value": "9821",
+        "kind": "fact",
+        "evidence_id": "later-photo",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Whether photos show same item unresolved"
+    ],
+    "findings": [
+      {
+        "category": "item_identity_contradiction",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "serial details conflict",
+          "do not speculate why"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Explain differing serials and provide current-item verification."
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

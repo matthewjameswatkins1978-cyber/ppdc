@@ -1,0 +1,107 @@
+{
+  "id": "CORE-07",
+  "title": "Damaged laptop",
+  "locale": "en-GB",
+  "scenario_class": "condition_explains_price",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Dell XPS 13 9310 £180. Screen line defect and missing charger disclosed; photo shows defect. Tracked, Goods and Services.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Dell XPS 13 9310 £180; screen line; charger missing; tracked; Goods and Services.",
+        "private": false
+      },
+      {
+        "id": "photo",
+        "kind": "actual_item_photo",
+        "text": "Screen shows bright line.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Dell XPS 13 9310",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 180,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "condition",
+        "value": "screen defect; charger missing",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Battery health unknown"
+    ],
+    "findings": [
+      {
+        "category": "condition_disclosure",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "price is coherent with disclosed defect and missing charger"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can battery health be confirmed?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

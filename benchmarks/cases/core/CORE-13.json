@@ -1,0 +1,90 @@
+{
+  "id": "CORE-13",
+  "title": "Friends & Family purchase request",
+  "locale": "en-GB",
+  "scenario_class": "payment_protection",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Used Nintendo Switch OLED £150. Seller explicitly requests PayPal Friends and Family for purchase.",
+    "evidence": [
+      {
+        "id": "message",
+        "kind": "seller_message",
+        "text": "Switch OLED £150. Please pay Friends and Family.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "payment_method_requested",
+        "value": "friends_and_family",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      }
+    ],
+    "unknowns": [],
+    "findings": [
+      {
+        "category": "payment_protection",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": "PAYPAL-UK-FF-PURCHASE",
+        "must_include_concepts": [
+          "Friends and Family purchases are not eligible for Buyer Protection",
+          "payment warning does not prove fraud"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Will seller accept Goods and Services?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "resolve payment route before paying",
+        "Friends and Family purchase is not covered by Buyer Protection"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-FF-PURCHASE",
+    "PAYPAL-UK-BUYER-PROTECTION"
+  ]
+}

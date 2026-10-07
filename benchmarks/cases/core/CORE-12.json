@@ -1,0 +1,119 @@
+{
+  "id": "CORE-12",
+  "title": "Very cheap high-demand console",
+  "locale": "en-GB",
+  "scenario_class": "high_price_anomaly_incomplete",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "New PS5 Slim £180. One generic image, vague answers; payment method not discussed.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "PS5 Slim £180; generic image; seller gives no further details.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "PS5 Slim",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 180,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Actual item unverified",
+      "condition unverified",
+      "payment route unknown",
+      "delivery unknown"
+    ],
+    "findings": [
+      {
+        "category": "price_anomaly",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "substantially below ordinary pricing"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      },
+      {
+        "category": "evidence_gap",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "actual item and payment route are not established"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can seller provide item-specific photos and confirm payment and delivery?"
+      ]
+    },
+    "research": {
+      "required": true,
+      "provider": "channel3",
+      "query_should_contain": [
+        "PlayStation 5 Slim",
+        "new UK retail"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-COMMON-SCAMS",
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

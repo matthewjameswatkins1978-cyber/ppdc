@@ -1,0 +1,102 @@
+{
+  "id": "CORE-15",
+  "title": "Move off protected payment route",
+  "locale": "en-GB",
+  "scenario_class": "payment_route_change",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Seller first agrees Goods and Services for used lens, then asks for direct bank transfer to avoid fees.",
+    "evidence": [
+      {
+        "id": "agreement",
+        "kind": "message",
+        "text": "Goods and Services agreed for used lens.",
+        "private": false
+      },
+      {
+        "id": "change",
+        "kind": "message",
+        "text": "Seller later requests bank transfer.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "payment_initial",
+        "value": "goods_and_services",
+        "kind": "fact",
+        "evidence_id": "agreement",
+        "required": true
+      },
+      {
+        "key": "payment_later",
+        "value": "bank_transfer",
+        "kind": "fact",
+        "evidence_id": "change",
+        "required": true
+      }
+    ],
+    "unknowns": [],
+    "findings": [
+      {
+        "category": "payment_protection",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "route changed to bank transfer",
+          "PayPal protection does not apply to bank transfer"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Will seller use the originally agreed purchase method?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "explain protection consequence",
+        "do not infer seller intent"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-FF-PURCHASE"
+  ]
+}

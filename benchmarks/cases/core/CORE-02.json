@@ -1,0 +1,105 @@
+{
+  "id": "CORE-02",
+  "title": "Normal used phone",
+  "locale": "en-GB",
+  "scenario_class": "ordinary_coherent",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Used Google Pixel 8 128GB, £320. Serial/model shown in settings photo. Screen and case photos show ordinary wear. Tracked shipping and Goods and Services.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Google Pixel 8 128GB £320; tracked; Goods and Services.",
+        "private": false
+      },
+      {
+        "id": "photos",
+        "kind": "actual_item_photos",
+        "text": "Screen, case and settings show model/serial and ordinary wear.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Google Pixel 8 128GB",
+        "kind": "fact",
+        "evidence_id": "photos",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 320,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "payment_method_requested",
+        "value": "goods_and_services",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Battery health is not shown"
+    ],
+    "findings": [
+      {
+        "category": "condition_detail",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "battery health is not established"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can the seller provide battery health?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

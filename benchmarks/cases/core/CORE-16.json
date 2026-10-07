@@ -1,0 +1,97 @@
+{
+  "id": "CORE-16",
+  "title": "Alarmist PayPal invoice",
+  "locale": "en-GB",
+  "scenario_class": "invoice_scam_pattern",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Unexpected PayPal invoice for account unlock fee says account closes in 30 minutes and directs buyer to fictional phone number 000 000 0000.",
+    "evidence": [
+      {
+        "id": "invoice",
+        "kind": "invoice",
+        "text": "Unexpected unlock fee; 30-minute deadline; call 000 000 0000.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "invoice_unexpected",
+        "value": true,
+        "kind": "fact",
+        "evidence_id": "invoice",
+        "required": true
+      },
+      {
+        "key": "urgent_contact",
+        "value": "call number in invoice",
+        "kind": "fact",
+        "evidence_id": "invoice",
+        "required": true
+      }
+    ],
+    "unknowns": [],
+    "findings": [
+      {
+        "category": "suspicious_invoice",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": "PAYPAL-UK-INVOICE-SCAM",
+        "must_include_concepts": [
+          "alarmist invoice supplies a contact number",
+          "verify directly through PayPal"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Did you order this? Check in the PayPal app/site; do not call invoice number."
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "verify through PayPal directly",
+        "do not use supplied contact details"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "verify_directly",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-INVOICE-SCAM",
+    "PAYPAL-UK-PHISHING"
+  ]
+}

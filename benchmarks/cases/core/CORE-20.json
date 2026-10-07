@@ -1,0 +1,99 @@
+{
+  "id": "CORE-20",
+  "title": "Condition contradiction",
+  "locale": "en-GB",
+  "scenario_class": "condition_contradiction",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Listing says new/unopened. Actual photos show scratched used camera and open box.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "New and unopened.",
+        "private": false
+      },
+      {
+        "id": "photos",
+        "kind": "actual_item_photos",
+        "text": "Scratches and opened box.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "condition_claim",
+        "value": "new and unopened",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "condition_visible",
+        "value": "used, scratched, box open",
+        "kind": "fact",
+        "evidence_id": "photos",
+        "required": true
+      }
+    ],
+    "unknowns": [],
+    "findings": [
+      {
+        "category": "condition_contradiction",
+        "required": true,
+        "expected_severity": "red",
+        "allowed_severities": [
+          "red"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "actual evidence conflicts with new/unopened description"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Correct condition and price terms in writing before deciding."
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "resolve_before_payment",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-BUYER-PROTECTION",
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

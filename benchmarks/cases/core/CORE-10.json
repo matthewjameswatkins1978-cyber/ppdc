@@ -1,0 +1,112 @@
+{
+  "id": "CORE-10",
+  "title": "No reliable price comparison",
+  "locale": "en-GB",
+  "scenario_class": "price_unknown",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Vintage 1970s synthesizer module £540; model suffix obscured. Recorded listings vary and are not clearly comparable.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Vintage synthesizer module £540; model suffix obscured.",
+        "private": false
+      },
+      {
+        "id": "research-a",
+        "kind": "recorded_research",
+        "text": "£400 asking price; exact condition/model unclear.",
+        "private": false
+      },
+      {
+        "id": "research-b",
+        "kind": "recorded_research",
+        "text": "£900 asking price; likely different revision.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "item",
+        "value": "vintage synthesizer module",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 540,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Exact revision unknown",
+      "reliable comparable market value cannot be established"
+    ],
+    "findings": [
+      {
+        "category": "price_confidence",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "examples are not comparable",
+          "cannot confidently benchmark price"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can full model/revision be shown?"
+      ]
+    },
+    "research": {
+      "required": true,
+      "provider": "either",
+      "query_should_contain": [
+        "full model revision",
+        "used",
+        "UK"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "cannot confidently benchmark this price"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

@@ -1,0 +1,111 @@
+{
+  "id": "CORE-03",
+  "title": "Refurbished camera",
+  "locale": "en-GB",
+  "scenario_class": "explained_bargain",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Sony A7 III body £850, refurbished by independent shop and disclosed. Minor paint wear shown in photos. Goods and Services; tracked.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Sony A7 III refurbished £850; independent refurbishment disclosed; tracked; Goods and Services.",
+        "private": false
+      },
+      {
+        "id": "photos",
+        "kind": "actual_item_photos",
+        "text": "Minor paint wear.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Sony A7 III",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 850,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "condition",
+        "value": "refurbished; minor paint wear",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Refurbisher warranty duration not stated"
+    ],
+    "findings": [
+      {
+        "category": "price_context",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "lower price is coherent with refurbished condition"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "What warranty, if any, is included?"
+      ]
+    },
+    "research": {
+      "required": true,
+      "provider": "channel3",
+      "query_should_contain": [
+        "Sony A7 III",
+        "refurbished",
+        "UK"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "id": "CORE-01",
+  "title": "Normal used guitar",
+  "locale": "en-GB",
+  "scenario_class": "ordinary_coherent",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Used Yamaha Pacifica 112V, £180. Current photos show this guitar and serial. Light buckle wear is disclosed. Tracked post and PayPal Goods and Services.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Yamaha Pacifica 112V £180; light buckle wear; tracked; Goods and Services.",
+        "private": false
+      },
+      {
+        "id": "photo",
+        "kind": "actual_item_photo",
+        "text": "Current guitar and serial label.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Yamaha Pacifica 112V",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 180,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "condition",
+        "value": "light buckle wear",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "payment_method_requested",
+        "value": "goods_and_services",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Return terms are not stated"
+    ],
+    "findings": [
+      {
+        "category": "item_condition",
+        "required": true,
+        "expected_severity": "green",
+        "allowed_severities": [
+          "green"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "photos and written condition are consistent"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": false,
+      "questions": []
+    },
+    "research": {
+      "required": true,
+      "provider": "channel3",
+      "query_should_contain": [
+        "Yamaha Pacifica 112V",
+        "used",
+        "UK"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "deal terms are coherent",
+        "green is not a guarantee"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "continue_or_clarify",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

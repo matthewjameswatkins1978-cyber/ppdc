@@ -1,0 +1,99 @@
+{
+  "id": "CORE-04",
+  "title": "Ordinary purchase with missing courier",
+  "locale": "en-GB",
+  "scenario_class": "incomplete_delivery_detail",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Bosch GSR 18V drill kit £75. Batteries and condition described. Seller agrees tracked shipping within three days but does not name carrier. Goods and Services.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Bosch GSR 18V £75; two batteries; tracked within three days; carrier unspecified; Goods and Services.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Bosch GSR 18V",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 75,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "delivery_terms",
+        "value": "tracked; carrier unspecified",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Carrier is unspecified"
+    ],
+    "findings": [
+      {
+        "category": "delivery_detail",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "carrier has not been named"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Which carrier will be used?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

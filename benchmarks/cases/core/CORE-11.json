@@ -1,0 +1,59 @@
+{
+  "id": "CORE-11",
+  "title": "Product identity uncertain",
+  "locale": "en-GB",
+  "scenario_class": "identity_ambiguous",
+  "modalities": [
+    "image"
+  ],
+  "input": {
+    "deal_text": "Cropped image could show Canon EOS R6 or R6 Mark II; no readable marking or full listing.",
+    "evidence": [
+      {
+        "id": "crop",
+        "kind": "image",
+        "text": "Cropped camera body; no readable model marking.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [],
+    "unknowns": [
+      "Exact model could be EOS R6 or R6 Mark II",
+      "price and payment not visible"
+    ],
+    "findings": [],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Can you share the model marking or full listing?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "request_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": []
+}

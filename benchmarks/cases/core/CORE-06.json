@@ -1,0 +1,103 @@
+{
+  "id": "CORE-06",
+  "title": "Estate quick-sale bargain",
+  "locale": "en-GB",
+  "scenario_class": "legitimate_bargain",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Used Leica M10 body £2,100. Seller says estate sale. Current photos show item and serial plate. Goods and Services; tracked insured delivery.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Leica M10 £2,100; estate sale; Goods and Services; tracked insured delivery.",
+        "private": false
+      },
+      {
+        "id": "photos",
+        "kind": "actual_item_photos",
+        "text": "Item and serial plate.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model",
+        "value": "Leica M10",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "price",
+        "value": 2100,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Estate authority not independently verified"
+    ],
+    "findings": [
+      {
+        "category": "price_anomaly",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "unusually low price remains noteworthy",
+          "explanation and item-specific evidence reduce concern"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": false,
+      "questions": []
+    },
+    "research": {
+      "required": true,
+      "provider": "channel3",
+      "query_should_contain": [
+        "Leica M10",
+        "used",
+        "UK"
+      ],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_with_information",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "FTC-ONLINE-MARKETPLACE"
+  ]
+}

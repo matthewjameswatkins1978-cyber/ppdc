@@ -1,0 +1,101 @@
+{
+  "id": "CORE-17",
+  "title": "Urgency only",
+  "locale": "en-GB",
+  "scenario_class": "urgency_without_other_signals",
+  "modalities": [
+    "text"
+  ],
+  "input": {
+    "deal_text": "Used bicycle £240, ordinary price, photos and condition clear, tracked, Goods and Services. Seller asks for answer tonight because another buyer is interested.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Bicycle £240; photos, condition; tracked; Goods and Services.",
+        "private": false
+      },
+      {
+        "id": "message",
+        "kind": "seller_message",
+        "text": "Please answer tonight; another buyer is interested.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "price",
+        "value": 240,
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      },
+      {
+        "key": "urgency",
+        "value": "answer tonight",
+        "kind": "fact",
+        "evidence_id": "message",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Return terms absent"
+    ],
+    "findings": [
+      {
+        "category": "urgency_context",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "time pressure alone does not establish fraud"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": false,
+      "questions": []
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [
+        "urgency alone is not proof",
+        "other coherent evidence remains relevant"
+      ],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "decide_without_pressure",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [],
+  "source_ids": [
+    "PAYPAL-UK-COMMON-SCAMS"
+  ]
+}

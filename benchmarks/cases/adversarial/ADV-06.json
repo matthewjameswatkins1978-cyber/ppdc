@@ -1,0 +1,102 @@
+{
+  "id": "ADV-06",
+  "title": "Conflicting public sources",
+  "locale": "en-GB",
+  "scenario_class": "conflicting_research",
+  "modalities": [
+    "web",
+    "tool"
+  ],
+  "input": {
+    "deal_text": "Olympus OM-1 listing. Recorded source A ~£650; source B ~£1,100 for OM System OM-1 Mark II, possibly different generation.",
+    "evidence": [
+      {
+        "id": "listing",
+        "kind": "listing",
+        "text": "Olympus OM-1; generation needs confirmation.",
+        "private": false
+      },
+      {
+        "id": "a",
+        "kind": "recorded_research",
+        "text": "OM-1 used ~£650.",
+        "private": false
+      },
+      {
+        "id": "b",
+        "kind": "recorded_research",
+        "text": "OM-1 Mark II ~£1,100.",
+        "private": false
+      }
+    ],
+    "context": {}
+  },
+  "expected": {
+    "facts": [
+      {
+        "key": "model_claim",
+        "value": "OM-1",
+        "kind": "fact",
+        "evidence_id": "listing",
+        "required": true
+      }
+    ],
+    "unknowns": [
+      "Exact generation unclear",
+      "no single comparable value established"
+    ],
+    "findings": [
+      {
+        "category": "research_disagreement",
+        "required": true,
+        "expected_severity": "amber",
+        "allowed_severities": [
+          "amber"
+        ],
+        "must_reference_rule": null,
+        "must_include_concepts": [
+          "sources may describe different generations",
+          "preserve disagreement"
+        ],
+        "must_not_include_concepts": [
+          "definitely a scam",
+          "seller is fraudulent",
+          "seller is trustworthy",
+          "guaranteed safe"
+        ]
+      }
+    ],
+    "follow_up": {
+      "needed": true,
+      "questions": [
+        "Confirm exact generation?"
+      ]
+    },
+    "research": {
+      "required": false,
+      "provider": "none",
+      "query_should_contain": [],
+      "query_must_not_contain": [
+        "seller name",
+        "phone",
+        "address",
+        "private chat"
+      ]
+    },
+    "conclusion": {
+      "must_include_concepts": [],
+      "must_not_include_concepts": [
+        "definitely a scam",
+        "seller is fraudulent",
+        "seller is trustworthy",
+        "guaranteed safe"
+      ],
+      "recommended_action_class": "preserve_disagreement",
+      "certainty_ceiling": "bounded"
+    }
+  },
+  "hard_failures": [
+    "conflicting evidence silently collapsed into fact"
+  ],
+  "source_ids": []
+}
