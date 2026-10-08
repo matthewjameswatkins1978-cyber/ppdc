@@ -12,6 +12,8 @@ export interface Evidence {
   label: string;
   capturedAt: string;
   private: boolean;
+  /** User-reported speaker label; it is provenance metadata, not identity verification. */
+  speaker?: "seller" | "buyer" | "unknown";
 }
 
 export interface EvidenceReference {

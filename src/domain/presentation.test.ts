@@ -49,6 +49,24 @@ test("payment and photo conflicts produce concrete clarification questions", () 
   assert.ok(questions.some((question) => question.includes("Goods & Services")));
   assert.ok(questions.some((question) => question.includes("current photo")));
 });
+
+test("validated AI questions reach the main question list without displacing the critical payment question", () => {
+  const deal = structuredClone(dealFixtures[0]);
+  deal.paymentMethod = { key: "payment_method", value: "PayPal Friends and Family", kind: "fact", evidenceIds: ["listing"] };
+  deal.condition = { key: "condition", value: "used", kind: "fact", evidenceIds: ["listing"] };
+  deal.deliveryTerms = { key: "delivery_terms", value: "tracked postage", kind: "fact", evidenceIds: ["listing"] };
+  deal.aiAnalysis = {
+    contractVersion: "ppdc-ai-analysis/1", status: "proposed",
+    provenance: { provider: "astropods", model: "synthetic", promptVersion: "test", requestId: "req", conversationId: "conv", startedAt: "2026-10-08T00:00:00.000Z", latencyMs: 1, inputTokens: null, outputTokens: null, costUsd: null, validationStatus: "complete" },
+    sourceAttribution: [], candidateFacts: [], sellerClaims: [], unknowns: [], contradictions: [],
+    buyerQuestions: ["Can you include the original receipt?", "Can you include the original receipt?", "Should I pay now?"], abstentions: [], explanation: "", rejected: [],
+  };
+  const questions = questionsFor(deal);
+  assert.ok(questions.length <= 4);
+  assert.ok(questions.some((question) => /Goods & Services/i.test(question)));
+  assert.equal(questions.filter((question) => /original receipt/i.test(question)).length, 1);
+  assert.ok(!questions.some((question) => /Should I pay now/i.test(question)));
+});
 test("evidence guidance stays practical and specific to delivery information", () => {
   const deal = structuredClone(dealFixtures[0]);
   assert.ok(evidenceToKeep(deal).some((item) => item.includes("tracking")));

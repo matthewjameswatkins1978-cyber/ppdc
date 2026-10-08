@@ -89,6 +89,15 @@ test("limits and prioritizes questions so payment and identity outrank cosmetic 
   assert.match(questionsFor(assessed)[0] ?? "", /Goods (?:&|and) Services/i);
 });
 
+test("omits AI questions whose topic is unsupported by supplied evidence", () => {
+  const listing = source("listing", "Used guitar, £275.");
+  const item = emptyCase();
+  item.buyer_questions = ["Can you confirm the delivery tracking number?", "Is the £275 asking price fair compared with similar listings?", "Is the guitar counterfeit?"];
+  const result = analyze([listing], item);
+  assert.deepEqual(result.buyerQuestions, ["Is the £275 asking price fair compared with similar listings?"]);
+  assert.ok(result.rejected.some(({ field }) => field === "buyer_questions"));
+});
+
 test("keeps professional repair wording as a seller claim and rejects a repair-quality inference", () => {
   const listing = source("listing", "The headstock was professionally repaired. Repair quality and stability are unknown.");
   const item = emptyCase();

@@ -16,6 +16,8 @@ export const AnalysisSourceSchema = z.object({
   kind: z.enum(["marketplace_listing", "seller_message", "buyer_message", "photo_ocr", "document", "user_supplied_text"]),
   text: z.string().min(1).max(32_000),
   target_entity: z.enum(["main_item", "accessory", "unknown"]).optional(),
+  captured_at: z.string().datetime().optional(),
+  timestamp_basis: z.enum(["server", "client_reported"]).optional(),
 }).strict();
 export type AnalysisSource = z.infer<typeof AnalysisSourceSchema>;
 
@@ -74,7 +76,7 @@ export interface TrustedDealAnalysis {
   contractVersion: typeof ANALYSIS_CONTRACT_VERSION;
   status: "proposed";
   provenance: TrustedAnalysisMetadata;
-  sourceAttribution: Array<Pick<AnalysisSource, "source_id" | "speaker" | "kind" | "target_entity">>;
+  sourceAttribution: Array<Pick<AnalysisSource, "source_id" | "speaker" | "kind" | "target_entity" | "captured_at" | "timestamp_basis">>;
   candidateFacts: CandidateObservation[];
   sellerClaims: CandidateObservation[];
   unknowns: AnalysisNote[];
@@ -184,7 +186,9 @@ export function validateProposedAnalysis(
       : `No supported inference was admitted for ${field.replaceAll("_", " ")}.`;
     return [{ ...note, field, text }];
   });
-  const questions = prioritizeBuyerQuestions(parsed.buyer_questions);
+  const groundedQuestions = parsed.buyer_questions.filter((question) => questionSupportedByEvidence(question, sources));
+  if (groundedQuestions.length !== parsed.buyer_questions.length) rejected.push({ field: "buyer_questions", reason: "One or more questions referenced a topic not present in the supplied evidence and were omitted." });
+  const questions = prioritizeBuyerQuestions(groundedQuestions);
   const groundedQuotes = [...admittedFacts, ...admittedClaims, ...admittedContradictions.flatMap(({ candidates }) => candidates)]
     .flatMap((observation) => observation.evidence.map((ref) => ref.quote));
   const uniqueGroundedQuotes = [...new Set(groundedQuotes)].slice(0, 3);
@@ -200,7 +204,7 @@ export function validateProposedAnalysis(
     contractVersion: ANALYSIS_CONTRACT_VERSION,
     status: "proposed",
     provenance: { ...metadata, validationStatus },
-    sourceAttribution: sources.map(({ source_id, speaker, kind, target_entity }) => ({ source_id, speaker, kind, ...(target_entity ? { target_entity } : {}) })),
+    sourceAttribution: sources.map(({ source_id, speaker, kind, target_entity, captured_at, timestamp_basis }) => ({ source_id, speaker, kind, ...(target_entity ? { target_entity } : {}), ...(captured_at ? { captured_at } : {}), ...(timestamp_basis ? { timestamp_basis } : {}) })),
     candidateFacts: admittedFacts,
     sellerClaims: admittedClaims,
     unknowns: trustedNotes(parsed.unknowns, "Unknown"),
@@ -214,8 +218,14 @@ export function validateProposedAnalysis(
 
 /** Keep the highest-impact questions first and cap the user-facing list. */
 export function prioritizeBuyerQuestions(questions: string[], maximum = 4): string[] {
-  const unique = [...new Set(questions.map((question) => question.trim()).filter(Boolean))]
-    .filter((question) => !/(?:should i (?:buy|pay)|pay (?:now|a deposit)|safe to buy|seller (?:is )?trustworthy|is this (?:a )?scam|authorize payment|reveal.*(?:prompt|secret))/i.test(question));
+  const seen = new Set<string>();
+  const unique = questions.map((question) => question.trim()).filter((question) => {
+    const key = question.toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).filter((question) => question.endsWith("?")
+    && !/(?:should i (?:buy|pay)|pay (?:now|a deposit)|safe to buy|seller (?:is )?trustworthy|is this (?:a )?scam|(?:fake|counterfeit|stolen|fraud|legit|trustworthy)|authorize payment|reveal.*(?:prompt|secret)|(?:send|transfer|pay|deposit)\s+(?:the\s+)?(?:money|payment|deposit))/i.test(question));
   return unique.map((question, index) => ({ question, index, score: questionPriority(question) }))
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .slice(0, maximum).map(({ question }) => question);
@@ -229,6 +239,21 @@ function questionPriority(question: string): number {
   if (/delivery|shipping|postage|collection|tracking/i.test(question)) return 60;
   if (/accessor|included|receipt|record|warranty|return/i.test(question)) return 40;
   return 30;
+}
+
+function questionSupportedByEvidence(question: string, sources: AnalysisSource[]): boolean {
+  if (!question.trim().endsWith("?")) return false;
+  const sourceText = sources.map(({ text }) => text).join("\n").toLocaleLowerCase();
+  const topicPatterns: Array<[RegExp, RegExp]> = [
+    [/payment|paypal|goods\s*(?:&|and)\s*services|friends\s*(?:&|and)\s*family|bank transfer|cash/i, /paypal|payment|bank transfer|\bcash\b/i],
+    [/repair|damage|working|condition|stability/i, /repair|damage|condition|working|stable|stability/i],
+    [/model|generation|variant|item/i, /model|generation|variant|item|guitar|console|phone|laptop|camera|\b[A-Z][a-z]+\s+[A-Z][A-Za-z0-9-]+\b/],
+    [/accessor|included|receipt|record|warranty|return/i, /accessor|included|includes|comes with|receipt|record|warranty|return/i],
+    [/delivery|shipping|postage|collection|tracking/i, /delivery|shipping|postage|collection|tracking|courier/i],
+    [/price|comparable|market|value/i, /price|£|€|\$|\bGBP\b|\bEUR\b|\bUSD\b/i],
+  ];
+  const topic = topicPatterns.find(([questionPattern]) => questionPattern.test(question));
+  return Boolean(topic && topic[1].test(sourceText));
 }
 
 function attributionMatches(speaker: AnalysisSource["speaker"], attribution: z.infer<typeof AttributionSchema>): boolean {
