@@ -32,9 +32,15 @@ export function questionsFor(deal: Deal, proposedQuestions: string[] = []): stri
   if (deal.priceDisplays?.length) candidates.push("Which amount and currency will be charged at checkout, given the approximate conversion shown?");
   if (/original asking price is unclear|current asking price remains unknown/.test(unknownText) || !deal.price) candidates.push("What is the current asking price and currency?");
   if (!deal.paymentMethod) candidates.push("Which payment method is being requested for this purchase?");
-  if (deal.deliveryTerms && /\b(?:no|not|without|unavailable)\s+(?:shipping|postage|delivery)\b|\b(?:shipping|postage|delivery)\s+(?:is\s+)?not\s+(?:offered|available|included)\b/i.test(deal.deliveryTerms.value)) candidates.push("Is collection available, or is there another delivery option?");
+  const deliveryCandidates = (deal.candidates ?? []).filter((candidate) => candidate.factType === "delivery" && ["current", "corrected"].includes(candidate.temporalStatus));
+  const hasAvailableDelivery = deliveryCandidates.some((candidate) => candidate.polarity === "affirmed");
+  const hasUnavailableDelivery = deliveryCandidates.some((candidate) => candidate.polarity === "negated");
+  const hasConditionalDelivery = deliveryCandidates.some((candidate) => candidate.polarity === "affirmed" && candidate.modality === "conditional");
+  if (deliveryCandidates.length && hasUnavailableDelivery && hasAvailableDelivery) candidates.push("The evidence rules out some delivery options; does the stated available option work for you?");
+  else if (deliveryCandidates.length && hasUnavailableDelivery) candidates.push("Which delivery or collection option, if any, is available?");
+  else if (hasConditionalDelivery || (deal.deliveryTerms && /varies|depends/i.test(deal.deliveryTerms.value))) candidates.push("What delivery method and final delivery cost apply to this item?");
+  else if (!deliveryCandidates.length && deal.deliveryTerms && /\b(?:no|not|without|unavailable)\s+(?:shipping|postage|delivery)\b|\b(?:shipping|postage|delivery)\s+(?:is\s+)?not\s+(?:offered|available|included)\b/i.test(deal.deliveryTerms.value)) candidates.push("Is collection available, or is there another delivery option?");
   else if (!deal.deliveryTerms) candidates.push("How will the item be delivered or collected, and what will delivery cost?");
-  else if (/varies|depends/i.test(deal.deliveryTerms.value)) candidates.push("What delivery method and final delivery cost apply to this item?");
   if (/exact year|model year/.test(unknownText)) candidates.push("Can you confirm the model year and share matching item details?");
   if (/condition-specific seller note|condition-specific details/i.test(unknownText)) candidates.push("Can you confirm any condition-specific faults or repairs?");
   if (!jobLotDetailsAsked && /included accessories|accessories are not stated|accessories are unknown|accessories[^.!?]{0,60}(?:included|listed|stated|unknown)/.test(unknownText)) candidates.push("Please confirm exactly which accessories are included and which are missing?");

@@ -28,12 +28,19 @@ export function assessDeal(deal: Deal): Deal {
     add({ severity: "amber", category: "condition", title: conditionConcern ? "Disclosed condition limits need review" : "Condition needs clarification", explanation: conditionConcern ? `The supplied evidence describes: ${deal.condition?.value}. This is a seller description, not an independent inspection or an assessment of intent.` : "The supplied evidence does not establish the item condition.", evidenceIds: knownEvidence(deal.condition), ruleId: conditionConcern ? "condition-disclosed-faults" : "condition-unknown", kind: conditionConcern ? "fact" : "unknown" });
   }
 
-  if (deal.deliveryTerms && /\b(?:no|not|without|unavailable)\s+(?:shipping|postage|delivery)\b|\b(?:shipping|postage|delivery)\s+(?:is\s+)?not\s+(?:offered|available|included)\b/i.test(deal.deliveryTerms.value)) {
+  const deliveryCandidates = (deal.candidates ?? []).filter((candidate) => candidate.factType === "delivery" && ["current", "corrected"].includes(candidate.temporalStatus));
+  const availableDelivery = deliveryCandidates.filter((candidate) => candidate.polarity === "affirmed");
+  const unavailableDelivery = deliveryCandidates.filter((candidate) => candidate.polarity === "negated");
+  const conditionalDelivery = availableDelivery.some((candidate) => candidate.modality === "conditional");
+  const deliveryEvidenceIds = [...new Set(deliveryCandidates.map(({ sourceId }) => sourceId))];
+  if (unavailableDelivery.length && (!availableDelivery.length || unavailableDelivery.some((candidate) => /shipping|postage|delivery/i.test(String(candidate.value))))) {
+    add({ severity: "amber", category: "delivery", title: "Some delivery options are unavailable", explanation: availableDelivery.length ? `The supplied evidence says ${unavailableDelivery.map(({ value }) => value).join(" and ")} is unavailable. It also states: ${availableDelivery.map(({ quote }) => quote).join("; ")}.` : `The supplied evidence says: ${deal.deliveryTerms?.value}. It does not establish a practical delivery or collection arrangement.`, evidenceIds: deliveryEvidenceIds, ruleId: "delivery-unavailable", kind: "fact" });
+  } else if (conditionalDelivery || (deal.deliveryTerms && /varies|depends/i.test(deal.deliveryTerms.value))) {
+    add({ severity: "amber", category: "delivery", title: "Final delivery arrangement needs confirmation", explanation: `The supplied evidence says: ${deal.deliveryTerms?.value}. Confirm which conditional option and cost apply.`, evidenceIds: deliveryEvidenceIds.length ? deliveryEvidenceIds : knownEvidence(deal.deliveryTerms), ruleId: "delivery-variable", kind: "unknown" });
+  } else if (!deliveryCandidates.length && deal.deliveryTerms && /\b(?:no|not|without|unavailable)\s+(?:shipping|postage|delivery)\b|\b(?:shipping|postage|delivery)\s+(?:is\s+)?not\s+(?:offered|available|included)\b/i.test(deal.deliveryTerms.value)) {
     add({ severity: "amber", category: "delivery", title: "Shipping is not offered", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. It does not establish another delivery arrangement.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-unavailable", kind: "fact" });
-  } else if (deal.deliveryTerms && /varies|depends/i.test(deal.deliveryTerms.value)) {
-    add({ severity: "amber", category: "delivery", title: "Final delivery cost needs confirmation", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. It does not establish the final delivery method and cost.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-variable", kind: "unknown" });
   } else if (deal.deliveryTerms) {
-    add({ severity: "green", category: "delivery", title: "Delivery terms are stated", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. Check that the practical arrangement matches what you expect.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-stated", kind: "fact" });
+    add({ severity: "green", category: "delivery", title: "Delivery terms are stated", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. Check that the practical arrangement matches what you expect.`, evidenceIds: deliveryEvidenceIds.length ? deliveryEvidenceIds : knownEvidence(deal.deliveryTerms), ruleId: "delivery-stated", kind: "fact" });
   } else {
     add({ severity: "amber", category: "delivery", title: "Delivery or collection is unclear", explanation: "No delivery or collection arrangement was established from the supplied evidence.", evidenceIds: [], ruleId: "delivery-unknown", kind: "unknown" });
   }
@@ -127,8 +134,13 @@ export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
     });
     return current;
   };
-  const refs = (addition.evidenceRefs ?? []).map((ref) => ({ ...ref, evidenceId: addition.evidence[0]?.id ?? ref.evidenceId }));
+  const refs = validateEvidenceReferences(addition.evidenceRefs ?? [], addition.evidence, addition.sourceSegments);
   const orderOffset = Math.max(-1, ...(existing.sourceSegments ?? []).map(({ order }) => order)) + 1;
+  const existingSourceIds = new Set((existing.sourceSegments ?? []).map(({ sourceId }) => sourceId));
+  for (const segment of addition.sourceSegments ?? []) {
+    if (!segment.sourceId.trim() || existingSourceIds.has(segment.sourceId)) throw new Error(`Duplicate or invalid source ID: ${segment.sourceId}`);
+    existingSourceIds.add(segment.sourceId);
+  }
   const sourceSegments = [...(existing.sourceSegments ?? []), ...(addition.sourceSegments ?? []).map((segment, index) => ({ ...segment, order: orderOffset + index }))];
   const candidates = reconcileDealCandidates([...(existing.candidates ?? []), ...(addition.candidates ?? [])], sourceSegments.map(({ sourceId, order }) => ({ id: sourceId, order })));
   const currentPayments = candidates.filter((candidate) => candidate.factType === "payment_method" && ["current", "corrected"].includes(candidate.temporalStatus) && candidate.polarity === "affirmed" && ["requested", "conditional", "accepted"].includes(candidate.intent ?? ""));
@@ -159,7 +171,38 @@ export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
     priceDisplays: [...(existing.priceDisplays ?? []), ...(addition.priceDisplays ?? [])],
     unknowns: [...retainedUnknowns, ...newUnknowns, ...conflicts],
     evidence: [...existing.evidence, ...addition.evidence],
-    evidenceRefs: [...(existing.evidenceRefs ?? []), ...refs],
+    evidenceRefs: validateEvidenceReferences([...(existing.evidenceRefs ?? []), ...refs], [...existing.evidence, ...addition.evidence], sourceSegments, sourceSegments),
   };
   return assessDeal(merged);
+}
+function validateEvidenceReferences(
+  references: NonNullable<Deal["evidenceRefs"]>,
+  evidence: Deal["evidence"],
+  sourceSegments: Deal["sourceSegments"],
+  knownSegments: Deal["sourceSegments"] = sourceSegments,
+): NonNullable<Deal["evidenceRefs"]> {
+  const evidenceIds = new Set(evidence.map(({ id }) => id));
+  if (!sourceSegments?.length) return references.filter(({ evidenceId }) => evidenceIds.has(evidenceId)).map((reference) => ({ ...reference }));
+  const valid: NonNullable<Deal["evidenceRefs"]> = [];
+  for (const reference of references) {
+    if (!evidenceIds.has(reference.evidenceId)) continue;
+    const segment = knownSegments?.find(({ sourceId }) => sourceId === reference.evidenceId);
+    if (!segment) {
+      if (reference.sourceField === undefined && reference.startOffset === undefined && reference.endOffset === undefined) valid.push({ ...reference });
+      continue;
+    }
+    if (reference.sourceField && reference.sourceField !== segment.fieldType) continue;
+    let start = reference.startOffset;
+    let end = reference.endOffset;
+    if (start === undefined || end === undefined) {
+      const first = segment.originalText.indexOf(reference.quote);
+      if (first < 0 || segment.originalText.indexOf(reference.quote, first + Math.max(reference.quote.length, 1)) >= 0) continue;
+      start = first;
+      end = first + reference.quote.length;
+    }
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || end > segment.originalText.length) continue;
+    if (segment.originalText.slice(start, end) !== reference.quote) continue;
+    valid.push({ ...reference, sourceField: segment.fieldType, startOffset: start, endOffset: end });
+  }
+  return valid;
 }

@@ -128,35 +128,68 @@ function candidatesForSegment(segment: DealIntakeSegment, deal: Deal): DealCandi
 
 function paymentCandidates(segment: DealIntakeSegment): DealCandidate[] {
   const pattern = /PayPal\s+(?:Friends\s*(?:&|and)\s*Family|Goods\s*(?:&|and)\s*Services)|Friends\s*(?:&|and)\s*Family|Goods\s*(?:&|and)\s*Services|bank\s+transfer|cash(?:\s+on\s+(?:collection|pickup))?|(?:credit|debit)?\s*card(?:\s+payment)?|bank\s+payment/gi;
-  return [...segment.text.matchAll(pattern)].flatMap((match) => {
-    const start = match.index ?? 0; const methodEnd = start + match[0].length; const range = clauseRange(segment.text, start);
-    const clause = segment.text.slice(range.start, range.end); const before = segment.text.slice(Math.max(range.start, start - 35), start); const after = segment.text.slice(methodEnd, Math.min(range.end, methodEnd + 45));
+  const matches = [...segment.text.matchAll(pattern)];
+  return matches.map((match, index) => {
+    const start = match.index ?? 0;
+    const methodEnd = start + match[0].length;
+    const range = clauseRange(segment.text, start);
+    const previous = matches[index - 1];
+    const previousEnd = previous ? (previous.index ?? 0) + previous[0].length : range.start;
+    const nextStart = matches[index + 1]?.index ?? range.end;
+    const before = segment.text.slice(Math.max(range.start, start - 48), start);
+    const after = segment.text.slice(methodEnd, Math.min(range.end, methodEnd + 48));
+    const local = segment.text.slice(previousEnd, nextStart);
     const isFamily = /friends\s*(?:&|and)\s*family/i.test(match[0]);
-    const negated = /\b(?:no|not|never|without|reject(?:ed)?|declin(?:ed|e)|don['’]?t\s+(?:accept|use)|do\s+not\s+(?:accept|use))\s*$/i.test(before) || /^\s*(?:is\s+)?(?:not\s+(?:needed|accepted|required|requested)|isn['’]?t\s+(?:needed|accepted|required)|not\s+for\s+(?:this\s+)?purchase)\b/i.test(after);
-    const conditional = /\b(?:if|when|unless|depending\s+on|only\s+if)\b/i.test(clause);
-    const mentionOnly = /\b(?:mentioned|mention|help\s+text|example|not\s+(?:asking|requested)|no\s+.+\s+needed)\b/i.test(clause);
-    const correctionAt = segment.text.slice(range.start, range.end).search(/\b(?:actually|correction|corrected|instead|updated|changed\s+to|now\s+accepts?)\b/i);
-    const correctionOffset = correctionAt < 0 ? -1 : range.start + correctionAt;
-    const temporalStatus: DealCandidate["temporalStatus"] = correctionOffset >= 0 ? (start < correctionOffset ? "historical" : "corrected") : /\b(?:previously|used\s+to|no\s+longer)\b/i.test(before) ? "historical" : "current";
-    const explicitRequest = /\b(?:only|please\s+pay|requested|request(?:ed)?|accept(?:ed)?|pay\s+by|seller\s+asks?)\b/i.test(clause);
-    const paymentContext = ["payment_terms", "plain_text", "follow_up", "description"].includes(segment.field);
-    const intent: DealCandidate["intent"] = negated ? "rejected" : conditional ? "conditional" : isFamily ? (mentionOnly && !explicitRequest ? "mentioned" : explicitRequest || paymentContext ? "requested" : "mentioned") : mentionOnly ? "mentioned" : paymentContext ? "accepted" : "mentioned";
-    const polarity: DealCandidate["polarity"] = negated ? "negated" : "affirmed";
-    const modality: DealCandidate["modality"] = negated ? "asserted" : conditional ? "conditional" : "asserted";
-    const onlySuffix = /\bonly\b/i.test(after) ? " only" : "";
-    const value = isFamily ? "PayPal Friends & Family" : /goods\s*(?:&|and)\s*services/i.test(match[0]) ? "PayPal Goods & Services" : `${match[0].trim()}${onlySuffix}`;
-    return [{ factType: "payment_method", subject: "payment", value, sourceId: segment.id, quote: clause, startOffset: range.start, endOffset: range.end, polarity, modality, temporalStatus, intent }];
+    const directNegation = /\b(?:no|not|never|without|reject(?:ed)?|declin(?:ed|e)|don['’]?t\s+(?:accept|use)|do\s+not\s+(?:accept|use)|won['’]?t\s+(?:accept|use)|cannot\s+(?:accept|use)|can['’]?t\s+(?:accept|use))\s*$/i.test(before)
+      || /^\s*(?:is\s+)?(?:not\s+(?:needed|accepted|required|requested|for\s+(?:this\s+)?purchase)|isn['’]?t\s+(?:needed|accepted|required)|not\s+for\s+(?:this\s+)?purchase)\b/i.test(after);
+    const inheritsNegation = Boolean(previous && /^\s*(?:or|and)\s*$/i.test(segment.text.slice(previousEnd, start))
+      && /\b(?:no|not|never|without|reject(?:ed)?|declin(?:ed|e)|don['’]?t|do\s+not|won['’]?t|cannot|can['’]?t)\b/i.test(segment.text.slice(Math.max(range.start, (previous.index ?? 0) - 48), previous.index)));
+    const negated = directNegation || inheritsNegation;
+    const context = `${before.slice(-35)} ${local} ${after.slice(0, 30)}`;
+    const conditional = /\b(?:if|when|unless|depending\s+on|only\s+if)\b/i.test(context);
+    const mentionOnly = /\b(?:guidance|policy|example|mentioned|mention|help\s+text|not\s+covered|isn['’]?t\s+covered|aren['’]?t\s+covered)\b/i.test(local)
+      && !/\b(?:seller\s+(?:asks?|requests?|prefers?|requires?)|please\s+pay|use\s+(?:paypal\s+)?|(?:only|preferred|easiest))\b/i.test(context);
+    const correctionCue = /\b(?:correction|corrected|actually|instead|updated|changed\s+to|now\s+accepts?)\b/i.test(before.slice(-48));
+    const historicalCue = /\b(?:previously\s+(?:suggested|offered|requested)|used\s+to|was\s+previously|no\s+longer)\b/i.test(local)
+      || /\b(?:previously\s+(?:suggested|offered|requested)|used\s+to|was\s+previously|no\s+longer)\b/i.test(before.slice(-48));
+    const explicitAction = /\b(?:seller\s+(?:asks?|requests?|prefers?|requires?|accepts?)|please\s+pay|pay\s+by|use\s+(?:paypal\s+)?|requested|preferred|easiest|only|accept(?:s|ed)?|is\s+(?:okay|fine))\b/i.test(context);
+    const paymentField = segment.field === "payment_terms" || segment.field === "plain_text";
+    const intent: DealCandidate["intent"] = negated ? "rejected"
+      : mentionOnly || (!paymentField && !explicitAction) ? "mentioned"
+        : conditional ? "conditional"
+          : explicitAction || (paymentField && !/\b(?:guidance|policy|example|mentioned|not\s+covered)\b/i.test(local))
+            ? (isFamily ? "requested" : "accepted")
+            : "mentioned";
+    const temporalStatus: DealCandidate["temporalStatus"] = historicalCue ? "historical" : correctionCue ? "corrected" : "current";
+    const value = isFamily ? "PayPal Friends & Family"
+      : /goods\s*(?:&|and)\s*services/i.test(match[0]) ? "PayPal Goods & Services"
+        : match[0].trim() + (/\bonly\b/i.test(after) ? " only" : "");
+    return { factType: "payment_method", subject: "payment", value, sourceId: segment.id,
+      quote: segment.text.slice(range.start, range.end), startOffset: range.start, endOffset: range.end,
+      polarity: negated ? "negated" : "affirmed", modality: conditional ? "conditional" : "asserted", temporalStatus, intent };
   });
 }
 
 function deliveryCandidates(segment: DealIntakeSegment): DealCandidate[] {
-  const pattern = /shipping|postage|delivery|courier|collection|pickup/gi;
-  return [...segment.text.matchAll(pattern)].flatMap((match) => {
-    const start = match.index ?? 0; const range = clauseRange(segment.text, start); const before = segment.text.slice(Math.max(range.start, start - 35), start); const after = segment.text.slice(start + match[0].length, Math.min(range.end, start + match[0].length + 35));
-    if (/\breturn\s*$/i.test(before)) return [];
-    const negated = /\b(?:no|not|never|without|unavailable|doesn['’]?t\s+offer)\s*$/i.test(before) || /^\s*(?:not\s+(?:available|offered|included)|unavailable)\b/i.test(after);
-    const conditional = /\b(?:if|when|varies|depends|depending)\b/i.test(segment.text.slice(range.start, range.end));
-    return [{ factType: "delivery" as const, subject: "delivery" as const, value: match[0].toLocaleLowerCase(), sourceId: segment.id, quote: segment.text.slice(range.start, range.end), startOffset: range.start, endOffset: range.end, polarity: negated ? "negated" as const : "affirmed" as const, modality: conditional ? "conditional" as const : "asserted" as const, temporalStatus: "current" as const }];
+  const matches = [...segment.text.matchAll(/shipping|postage|delivery|courier|collection|pickup/gi)];
+  return matches.flatMap((match, index) => {
+    const start = match.index ?? 0;
+    const end = start + match[0].length;
+    const range = clauseRange(segment.text, start);
+    const previous = matches[index - 1];
+    const previousEnd = previous ? (previous.index ?? 0) + previous[0].length : range.start;
+    const before = segment.text.slice(Math.max(range.start, start - 45), start);
+    const after = segment.text.slice(end, Math.min(range.end, end + 50));
+    if (/\breturn\s*$/i.test(before) || (match[0].toLocaleLowerCase() === "pickup" && /\bcash(?:\s+on)?\s*$/i.test(before))) return [];
+    const directNegation = /\b(?:no|not|never|without|unavailable|doesn['’]?t\s+offer|does\s+not\s+offer)\s*$/i.test(before)
+      || /\b(?:not\s+(?:available|offered|included)|unavailable|(?:is|are)\s+(?:both\s+)?unavailable)\b/i.test(after);
+    const inheritedNegation = Boolean(previous
+      && /^\s*(?:or|and)\s*$/i.test(segment.text.slice(previousEnd, start))
+      && /\b(?:no|not|never|without|unavailable|doesn['’]?t\s+offer|does\s+not\s+offer)\b/i.test(segment.text.slice(Math.max(range.start, (previous.index ?? 0) - 45), previous.index)));
+    const conditional = /\b(?:if|when|unless|varies|depends|depending|subject\s+to)\b/i.test(`${before.slice(-24)} ${after.slice(0, 35)}`);
+    return [{ factType: "delivery", subject: "delivery", value: match[0].toLocaleLowerCase(), sourceId: segment.id,
+      quote: segment.text.slice(range.start, range.end), startOffset: range.start, endOffset: range.end,
+      polarity: directNegation || inheritedNegation ? "negated" : "affirmed", modality: conditional ? "conditional" : "asserted", temporalStatus: "current" }];
   });
 }
 
@@ -173,9 +206,14 @@ function conditionCandidates(segment: DealIntakeSegment): DealCandidate[] {
     const checkout = checkoutIndex > Math.max(accessoryIndex, itemIndex) && start - range.start - checkoutIndex <= 60;
     const accessory = /\b(?:charger|adapter|controller|case|strings|accessory|accessories)\b/i.test(match[0]) || (accessoryIndex > itemIndex && start - range.start - accessoryIndex <= 60);
     const testedUnknown = /^(?:not\s+tested|untested)$/i.test(match[0]);
-    const polarity = /\bnot\s+because\b/i.test(prefix) ? "negated" : /\bnot\s*$/i.test(prefix) && !/\bnot\s+because\s*$/i.test(prefix) ? "negated" : "affirmed";
-    const value = testedUnknown ? "tested" : match[0].toLocaleLowerCase();
-    return { factType: "condition", subject: checkout ? "checkout" : accessory ? "accessory" : "main_item", value, sourceId: segment.id, quote: match[0], startOffset: start, endOffset: start + match[0].length, polarity, modality: testedUnknown ? "uncertain" : "asserted", temporalStatus: "current" };
+    const negated = /\bnot\s+because\b/i.test(prefix)
+      || /\b(?:not|no|never|without|isn['’]?t|aren['’]?t|doesn['’]?t)\s*$/i.test(prefix);
+    return {
+      factType: "condition", subject: checkout ? "checkout" : accessory ? "accessory" : "main_item",
+      value: testedUnknown ? "tested" : match[0].toLocaleLowerCase(), sourceId: segment.id,
+      quote: conditionRange(segment.text, start), startOffset: segment.text.lastIndexOf(conditionRange(segment.text, start), start), endOffset: segment.text.lastIndexOf(conditionRange(segment.text, start), start) + conditionRange(segment.text, start).length,
+      polarity: negated ? "negated" : "affirmed", modality: testedUnknown ? "uncertain" : "asserted", temporalStatus: "current",
+    };
   });
 }
 
@@ -188,6 +226,21 @@ function clauseRange(text: string, offset: number): { start: number; end: number
   return { start, end };
 }
 
+function conditionRange(text: string, offset: number): string {
+  const range = clauseRange(text, offset);
+  let start = range.start;
+  let end = range.end;
+  const contrast = /,\s*(?:but|although|however)\b|\s+but\s+/gi;
+  for (const match of text.slice(range.start, range.end).matchAll(contrast)) {
+    const delimiterStart = range.start + (match.index ?? 0);
+    const delimiterEnd = delimiterStart + match[0].length;
+    if (delimiterStart < offset) start = Math.max(start, delimiterEnd);
+    else { end = Math.min(end, delimiterStart); break; }
+  }
+  while (start < end && /\s/.test(text[start]!)) start++;
+  while (end > start && /\s/.test(text[end - 1]!)) end--;
+  return text.slice(start, end);
+}
 function rangesOf(text: string, quote: string): { start: number; end: number }[] {
   if (!quote) return [];
   const ranges: { start: number; end: number }[] = []; let offset = 0;
@@ -210,11 +263,17 @@ export function reconcileDealCandidates(candidates: DealCandidate[], segments: r
   const orders = new Map(segments.map((segment, index) => [segment.id, segment.order ?? index]));
   const corrections = candidates.filter((candidate) => candidate.factType === "payment_method" && candidate.temporalStatus === "corrected");
   if (!corrections.length) return candidates;
+  const methodOffset = (candidate: DealCandidate) => {
+    const method = /friends\s*(?:&|and)\s*family|goods\s*(?:&|and)\s*services|bank\s+transfer|cash(?:\s+on\s+(?:collection|pickup))?|(?:credit|debit)?\s*card(?:\s+payment)?|bank\s+payment/i;
+    const valueMethod = String(candidate.value).replace(/^PayPal /i, "");
+    const offset = candidate.quote.toLocaleLowerCase().indexOf(valueMethod.toLocaleLowerCase());
+    return candidate.startOffset + Math.max(0, offset);
+  };
   return candidates.map((candidate) => {
     if (candidate.factType !== "payment_method" || candidate.temporalStatus !== "current") return candidate;
     const candidateOrder = orders.get(candidate.sourceId) ?? -1;
     const superseded = corrections.some((correction) => {
-      if (correction.sourceId === candidate.sourceId) return correction.startOffset > candidate.startOffset;
+      if (correction.sourceId === candidate.sourceId) return methodOffset(correction) > methodOffset(candidate);
       return (orders.get(correction.sourceId) ?? -1) > candidateOrder;
     });
     return superseded ? { ...candidate, temporalStatus: "historical" } : candidate;

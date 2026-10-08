@@ -94,3 +94,117 @@ test("assessment remains stable when re-run on a structured multi-source intake"
   assert.ok(!updated.unknowns.some(({ key }) => key === "conflict_payment method"));
   assert.deepEqual(assessDeal(updated).findings, updated.findings);
 });
+
+test("004A-R1 keeps source references bound through multi-source evidence merges", () => {
+  const base = extractDealFromIntake({ dealId: "provenance-merge", segments: [
+    one("title", "Nintendo Switch OLED; Nintendo Switch OLED", "title-source"),
+    one("seller_notes", "Nintendo Switch OLED; charger faulty", "notes-source"),
+    one("payment_terms", "Friends & Family requested", "payment-source"),
+  ] });
+  const addition = extractDealFromIntake({ dealId: "provenance-merge", segments: [
+    one("follow_up", "Correction: Goods & Services only", "correction-source"),
+    one("delivery_terms", "Courier available; return postage is buyer paid", "delivery-source"),
+    one("ocr", "Nintendo Switch OLED", "ocr-source"),
+  ] });
+  const merged = addEvidenceToDeal(base, addition);
+  assert.deepEqual(merged.sourceSegments?.map(({ sourceId }) => sourceId), ["title-source", "notes-source", "payment-source", "correction-source", "delivery-source", "ocr-source"]);
+  for (const ref of merged.evidenceRefs ?? []) {
+    const source: { sourceId: string; fieldType: string; originalText: string; order: number } | undefined = merged.sourceSegments?.find(({ sourceId }) => sourceId === ref.evidenceId);
+    assert.ok(source, `reference source exists: ${ref.evidenceId}`);
+    assert.ok(ref.startOffset !== undefined && ref.endOffset !== undefined, `reference offsets exist: ${ref.field}`);
+    assert.equal(source!.originalText.slice(ref.startOffset, ref.endOffset), ref.quote);
+  }
+  assert.ok(merged.evidenceRefs?.some((ref) => ref.evidenceId === "ocr-source" && ref.quote === "Nintendo Switch OLED"));
+  assert.ok(merged.evidenceRefs?.some((ref) => ref.evidenceId === "title-source" && ref.quote === "Nintendo Switch OLED"));
+  assert.ok(merged.candidates?.some(({ sourceId, temporalStatus }) => sourceId === "payment-source" && temporalStatus === "historical"));
+  const invalidAddition = structuredClone(addition);
+  invalidAddition.evidenceRefs?.push({ field: "item", evidenceId: "ocr-source", sourceField: "title", quote: "Nintendo Switch OLED", startOffset: 0, endOffset: 19 });
+  invalidAddition.evidenceRefs?.push({ field: "item", evidenceId: "missing-source", quote: "Nintendo Switch OLED", startOffset: 0, endOffset: 19 });
+  const validated = addEvidenceToDeal(base, invalidAddition);
+  assert.ok(!validated.evidenceRefs?.some(({ evidenceId }) => evidenceId === "missing-source"));
+  assert.ok(!validated.evidenceRefs?.some(({ evidenceId, sourceField }) => evidenceId === "ocr-source" && sourceField === "title"));
+  assert.throws(() => addEvidenceToDeal(base, base), /Duplicate or invalid source ID/);
+  const legacy = structuredClone(base);
+  delete legacy.sourceSegments;
+  legacy.evidenceRefs = legacy.evidenceRefs?.map(({ sourceField, startOffset, endOffset, ...reference }) => reference);
+  const withLegacy = addEvidenceToDeal(legacy, addition);
+  assert.ok(withLegacy.evidenceRefs?.some(({ evidenceId, startOffset }) => evidenceId === "title-source" && startOffset === undefined));
+  assert.deepEqual(assessDeal(merged).findings, merged.findings);
+});
+
+test("004A-R1 scopes payment negation, intent, and corrections to each method", () => {
+  const cases: Array<[string, boolean, RegExp[]]> = [
+    ["I don't accept bank transfer; use Friends & Family.", true, [/bank transfer/i, /friends/i]],
+    ["No cash or Friends & Family; Goods & Services only.", false, [/cash/i, /friends/i, /goods/i]],
+    ["PayPal guidance says Friends & Family isn't covered. Seller accepts Goods & Services.", false, [/guidance/i, /accepts/i]],
+    ["Friends & Family requested, correction: postage is £5.", true, [/friends/i]],
+    ["Friends & Family requested. Correction: Goods & Services only.", false, [/goods/i]],
+    ["Friends & Family if posted; cash on collection.", true, [/friends/i, /cash/i]],
+    ["Friends & Family was previously suggested, but the seller now accepts Goods & Services only.", false, [/friends/i, /goods/i]],
+    ["No Friends & Family needed.", false, [/friends/i]],
+    ["Seller mentions Friends & Family as an example, but accepts Goods & Services.", false, [/example/i, /accepts/i]],
+  ];
+  for (const [text, shouldFlag, expected] of cases) {
+    const deal = assessDeal(extractDealFromIntake({ dealId: text, segments: [one("payment_terms", text)] }));
+    assert.equal(deal.findings.some(({ ruleId }) => ruleId === "friends-family-purchase"), shouldFlag, text);
+    for (const matcher of expected) assert.ok((deal.candidates ?? []).some(({ factType, quote }) => factType === "payment_method" && matcher.test(quote)), `${text}: candidate ${matcher}`);
+  }
+  const deliveryMention = extractDealFromIntake({ dealId: "delivery-payment-mention", segments: [one("delivery_terms", "£12 postage if bank transfer.")] });
+  assert.equal(deliveryMention.paymentMethod, undefined);
+  assert.ok(deliveryMention.candidates?.some(({ factType, intent }) => factType === "payment_method" && intent === "mentioned"));
+  const unrelatedCorrection = assessDeal(extractDealFromIntake({ dealId: "unrelated-correction", segments: [one("payment_terms", "Friends & Family requested, correction: postage is £5.")] }));
+  assert.ok(unrelatedCorrection.findings.some(({ ruleId }) => ruleId === "friends-family-purchase"));
+  assert.ok(unrelatedCorrection.candidates?.some(({ value, temporalStatus }) => /friends/i.test(String(value)) && temporalStatus === "current"));
+});
+
+test("004A-R1 projects condition polarity and subject into buyer-facing facts", () => {
+  const cases: Array<[string, boolean, string | undefined]> = [
+    ["The item is broken.", true, "broken"],
+    ["The item is not broken.", false, "not broken"],
+    ["The item works, not because it is broken.", false, "not because it is broken"],
+    ["The item is faulty.", true, "faulty"],
+    ["The item is not faulty.", false, "not faulty"],
+    ["There is no damage.", false, "no damage"],
+    ["The item is not working.", true, "not working"],
+    ["The item was not tested.", true, "not tested"],
+    ["The item was tested and is working.", false, "tested and is working"],
+    ["The checkout is not working.", false, undefined],
+    ["The charger is faulty, but the main item works.", true, "charger is faulty"],
+  ];
+  for (const [text, shouldConcern, visiblePhrase] of cases) {
+    const deal = assessDeal(extractDealFromIntake({ dealId: text, segments: [one("description", text)] }));
+    const conditionFinding = deal.findings.find(({ category }) => category === "condition");
+    if (text.startsWith("The checkout")) assert.notEqual(conditionFinding?.ruleId, "condition-disclosed-faults", text);
+    else if (shouldConcern) assert.equal(conditionFinding?.severity, "amber", text);
+    else if (!text.startsWith("The checkout")) assert.notEqual(conditionFinding?.severity, "amber", text);
+    if (visiblePhrase) assert.match(deal.condition?.value ?? "", new RegExp(visiblePhrase.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&"), "i"), text);
+    if (/not broken|not faulty|no damage|not because/i.test(text)) assert.doesNotMatch(conditionFinding?.explanation ?? "", /describes:.*(?:broken|faulty|damage)/i, text);
+    assert.ok(questionsFor(deal).length <= 4, text);
+  }
+  const accessory = assessDeal(extractDealFromIntake({ dealId: "accessory", segments: [one("description", "The charger is faulty, but the main item works.")] }));
+  assert.ok(accessory.candidates?.some(({ factType, subject, value }) => factType === "condition" && subject === "accessory" && value === "faulty"));
+  const repeated = extractDealFromIntake({ dealId: "repeated-condition", segments: [one("description", "The item is faulty, but the item is faulty.", "repeated")] });
+  const repeatedCandidates = repeated.candidates?.filter(({ factType }) => factType === "condition") ?? [];
+  assert.equal(repeatedCandidates.length, 2);
+  for (const candidate of repeatedCandidates) assert.equal(repeated.sourceSegments?.[0]?.originalText.slice(candidate.startOffset, candidate.endOffset), candidate.quote);
+});
+
+test("004A-R1 keeps delivery and collection availability distinct", () => {
+  const cases: Array<[string, string[], string[]]> = [
+    ["Shipping included.", ["shipping"], []],
+    ["No shipping.", [], ["shipping"]],
+    ["Collection only; shipping unavailable.", ["collection"], ["shipping"]],
+    ["No collection or pickup.", [], ["collection", "pickup"]],
+    ["No shipping or collection.", [], ["shipping", "collection"]],
+    ["Shipping and collection are both unavailable.", [], ["shipping", "collection"]],
+    ["Courier available if buyer pays.", ["courier"], []],
+    ["No cash pickup; courier available.", ["courier"], []],
+    ["Return postage is paid by the buyer.", [], []],
+  ];
+  for (const [text, offered, unavailable] of cases) {
+    const deal = assessDeal(extractDealFromIntake({ dealId: text, segments: [one("delivery_terms", text)] }));
+    for (const option of offered) assert.ok(deal.candidates?.some(({ factType, quote, polarity }) => factType === "delivery" && quote.toLowerCase().includes(option) && polarity === "affirmed"), `${text}: ${option} offered`);
+    for (const option of unavailable) assert.ok(deal.candidates?.some(({ factType, quote, polarity }) => factType === "delivery" && quote.toLowerCase().includes(option) && polarity === "negated"), `${text}: ${option} unavailable`);
+    assert.ok(questionsFor(deal).length <= 4);
+  }
+});
