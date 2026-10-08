@@ -39,4 +39,10 @@ PR #8 and this branch touch the same domain seams. Keep both sets of responsibil
 3. In `presentation.ts`, PR #8 currently prioritizes deterministic questions, then appends separately prioritized model questions. This branch generates a broader deterministic candidate set and ranks payment protection, conflicts, faults, and other concerns before the four-question cap. During integration, pass only validated AI questions into the domain question flow and apply one shared priority-aware cap to the combined candidates; do not let model questions displace Friends & Family or other higher-priority deterministic concerns.
 4. When combining branches, start from the latest reviewed PR #8 head, resolve these three files explicitly, and inspect the merged diff. Run cross-project contract tests, all PPDC tests, typecheck, production build, benchmark validation, audit, and secret scan. Keep both PRs draft and unmerged until Matthew reviews the combined result.
 
+## Source-aware deterministic contract (004A)
+
+`extractDealFromIntake` retains each original field and ordered follow-up as a separate source segment. Candidate quotes and offsets point into that segment; reconciliation keeps historical and corrected candidates available. The legacy `extractDealFromText` signature remains supported for plain text and OCR; the local OCR-only fallback tags its source as OCR.
+
+When integrating PR #8, validate proposed AI facts against the same source IDs and exact excerpts. The server continues to own trusted provenance and deterministic assessment remains authoritative. Preserve `sourceSegments` and candidates when adding evidence, then rerun deterministic reconciliation. Do not let AI candidates alter payment authority, severity, or the buyer's decision.
+
 The AI proposal remains optional and subordinate: it cannot change severity, accepted deal facts, currency/payment amount, or PayPal authority. An unresolved conflict remains unresolved until buyer-provided evidence or a stronger source supports a value.

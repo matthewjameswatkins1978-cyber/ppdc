@@ -1,8 +1,30 @@
-import type { Evidence } from "./deal";
+import type { Deal, DealCandidate, DealSourceField, Evidence } from "./deal";
 import { extractionToDeal, type DealExtraction, validateDealExtraction } from "./deal-extraction";
 
 /** Local no-network extraction; every proposed fact keeps an exact source quote. */
-export function extractDealFromText(text: string, dealId = "text-intake", evidenceLabel = "User-supplied listing text", evidenceId = "user-input") {
+export interface DealIntakeSegment {
+  id: string;
+  field: DealSourceField;
+  text: string;
+  order?: number;
+  label?: string;
+}
+
+export interface DealIntake {
+  dealId: string;
+  segments: readonly DealIntakeSegment[];
+  evidenceLabel?: string;
+}
+
+/** Legacy text/OCR call shape is preserved; structured fields use extractDealFromIntake. */
+export function extractDealFromText(text: string, dealId = "text-intake", evidenceLabel = "User-supplied listing text", evidenceId = "user-input", sourceField: Extract<DealSourceField, "plain_text" | "ocr"> = "plain_text") {
+  return extractDealFromIntake({
+    dealId,
+    evidenceLabel,
+    segments: [{ id: evidenceId, field: sourceField, text, order: 0, label: evidenceLabel }],
+  });
+}
+function extractSingleSourceText(text: string, dealId = "text-intake", evidenceLabel = "User-supplied listing text", evidenceId = "user-input") {
   const sourceText = text.trim();
   const extraction = validateDealExtraction(extractLocally(sourceText), sourceText);
   const evidence: Evidence = { id: evidenceId, source: "user", label: evidenceLabel, capturedAt: new Date().toISOString(), private: true };
@@ -11,6 +33,192 @@ export function extractDealFromText(text: string, dealId = "text-intake", eviden
     .filter((mention) => mention.role === "conversion" && mention.currency !== null)
     .map((mention) => ({ amount: mention.amount, currency: mention.currency!, kind: "approximate_conversion" as const, evidenceId, quote: mention.quote }));
   return deal;
+}
+
+/** Source-aware extraction keeps every segment separate until facts are reconciled. */
+export function extractDealFromIntake(intake: DealIntake): Deal {
+  if (!intake.segments.length) throw new Error("A deal intake must contain at least one source segment.");
+  const seenIds = new Set<string>();
+  const segments = intake.segments.map((segment, index) => {
+    if (!segment.id.trim() || seenIds.has(segment.id)) throw new Error(`Source IDs must be non-empty and unique: ${segment.id}`);
+    seenIds.add(segment.id);
+    return { ...segment, order: segment.order ?? index };
+  });
+  const extracted = segments.map((segment) => ({
+    segment,
+    deal: extractSingleSourceText(segment.text, intake.dealId, segment.label ?? `${segment.field} evidence`, segment.id),
+  }));
+  const candidates = reconcileDealCandidates(extracted.flatMap(({ segment, deal }) => candidatesForSegment(segment, deal)), segments);
+  const evidence = extracted.map(({ segment, deal }) => ({ ...deal.evidence[0]!, sourceRef: segment.field }));
+  const evidenceRefs = extracted.flatMap(({ segment, deal }) =>
+    (deal.evidenceRefs ?? []).flatMap((reference) => rangesOf(segment.text, reference.quote).map(({ start, end }) => ({
+      ...reference, evidenceId: segment.id, sourceField: segment.field, startOffset: start, endOffset: end,
+    }))),
+  );
+  for (const candidate of candidates) {
+    if (!evidenceRefs.some((reference) => reference.evidenceId === candidate.sourceId && reference.field === candidateField(candidate.factType) && reference.startOffset === candidate.startOffset && reference.endOffset === candidate.endOffset)) {
+      evidenceRefs.push({ field: candidateField(candidate.factType), evidenceId: candidate.sourceId, sourceField: segments.find(({ id }) => id === candidate.sourceId)!.field, quote: candidate.quote, startOffset: candidate.startOffset, endOffset: candidate.endOffset });
+    }
+  }
+
+  const ordered = [...extracted].sort((a, b) => sourcePriority(a.segment.field) - sourcePriority(b.segment.field) || a.segment.order - b.segment.order);
+  const conflicts: Deal["unknowns"] = [];
+  const select = <T extends { value: unknown; evidenceIds: string[] }>(field: "item" | "model" | "price" | "currency", get: (deal: Deal) => T | undefined): T | undefined => {
+    const values = ordered.flatMap(({ deal }) => get(deal) ? [get(deal)!] : []);
+    const chosen = values[0];
+    const alternatives = values.filter((value) => chosen && String(value.value).toLocaleLowerCase() !== String(chosen.value).toLocaleLowerCase());
+    if (chosen && alternatives.length) {
+      const all = [chosen, ...alternatives];
+      conflicts.push({ key: `conflict_${field}`, value: `Evidence gives different ${field} values: ${all.map(({ value }) => `“${value}”`).join(" and ")}. The current value is not resolved.`, kind: "unknown", evidenceIds: [...new Set(all.flatMap(({ evidenceIds }) => evidenceIds))] });
+    }
+    return chosen;
+  };
+  const item = select("item", (deal) => deal.item);
+  const model = select("model", (deal) => deal.model);
+  const price = select("price", (deal) => deal.price);
+  const currency = select("currency", (deal) => deal.currency);
+  const activePayment = candidates.filter((candidate) => candidate.factType === "payment_method" && ["current", "corrected"].includes(candidate.temporalStatus) && candidate.polarity === "affirmed" && ["requested", "conditional", "accepted"].includes(candidate.intent ?? ""));
+  const paymentMethod = activePayment.length ? {
+    key: "payment_method", value: unique(activePayment.map(({ value }) => String(value))).join(" or "), kind: "fact" as const,
+    evidenceIds: [...new Set(activePayment.map(({ sourceId }) => sourceId))],
+  } : undefined;
+  const deliveryCandidates = candidates.filter((candidate) => candidate.factType === "delivery" && ["current", "corrected"].includes(candidate.temporalStatus));
+  const deliveryTerms = deliveryCandidates.length ? {
+    key: "delivery_terms", value: unique(deliveryCandidates.map(({ quote }) => quote)).join("; "), kind: "fact" as const,
+    evidenceIds: [...new Set(deliveryCandidates.map(({ sourceId }) => sourceId))],
+  } : undefined;
+  const conditionCandidates = candidates.filter((candidate) => candidate.factType === "condition" && candidate.subject !== "checkout" && ["current", "corrected"].includes(candidate.temporalStatus));
+  const hasCheckoutFaultOnly = candidates.some((candidate) => candidate.factType === "condition" && candidate.subject === "checkout") && !conditionCandidates.length;
+  const extractedConditions = ordered.flatMap(({ deal }) => deal.condition ? [deal.condition] : []);
+  const condition = conditionCandidates.length
+    ? { key: "condition", value: unique(conditionCandidates.map(({ quote }) => quote.replace(/,\s*(?=(?:good|fair|excellent|very good|poor|mint)\s+condition)/i, "; "))).join("; "), kind: "fact" as const, evidenceIds: [...new Set(conditionCandidates.map(({ sourceId }) => sourceId))] }
+    : hasCheckoutFaultOnly ? undefined : extractedConditions[0];
+
+  const materialPromises = ordered.flatMap(({ deal }) => deal.materialPromises).filter((fact, index, all) => all.findIndex((candidate) => candidate.value.toLocaleLowerCase() === fact.value.toLocaleLowerCase()) === index);
+  const explicitUnknowns = ordered.flatMap(({ deal }) => deal.unknowns.filter((fact) => !String(fact.value).endsWith("not established by supplied text")));
+  const unknowns = [...explicitUnknowns, ...conflicts];
+  const absent = (key: string, fact: unknown) => { if (!fact) unknowns.push({ key, value: `${key} not established by supplied text`, kind: "unknown", evidenceIds: evidence.map(({ id }) => id) }); };
+  absent("item", item); absent("model", model); absent("price", price); absent("currency", currency);
+  absent("condition", condition); absent("payment method", paymentMethod); absent("delivery terms", deliveryTerms);
+  return {
+    id: intake.dealId, status: "draft", item, model, price, currency, condition, paymentMethod, deliveryTerms,
+    materialPromises, unknowns, evidence, evidenceRefs, sourceSegments: segments.map(({ id, field, text, order }) => ({ sourceId: id, fieldType: field, originalText: text, order })),
+    candidates, priceDisplays: ordered.flatMap(({ deal }) => deal.priceDisplays ?? []), findings: [],
+  };
+}
+
+function candidatesForSegment(segment: DealIntakeSegment, deal: Deal): DealCandidate[] {
+  const candidates: DealCandidate[] = [];
+  const add = (factType: DealCandidate["factType"], subject: DealCandidate["subject"], value: string | number, quote: string, polarity: DealCandidate["polarity"] = "affirmed", modality: DealCandidate["modality"] = "asserted", temporalStatus: DealCandidate["temporalStatus"] = "current", intent?: DealCandidate["intent"]) => {
+    for (const { start, end } of rangesOf(segment.text, quote)) candidates.push({ factType, subject, value, sourceId: segment.id, quote, startOffset: start, endOffset: end, polarity, modality, temporalStatus, ...(intent ? { intent } : {}) });
+  };
+  const factValues: [string, DealCandidate["factType"], DealCandidate["subject"], unknown][] = [
+    ["item", "item", "main_item", deal.item?.value], ["model", "model", "main_item", deal.model?.value],
+    ["price", "price", "main_item", deal.price?.value], ["currency", "currency", "main_item", deal.currency?.value],
+  ];
+  for (const [field, factType, subject, value] of factValues) {
+    if (value === undefined) continue;
+    for (const ref of deal.evidenceRefs ?? []) if (ref.field === field) add(factType, subject, value as string | number, ref.quote);
+  }
+  for (const fact of deal.materialPromises) for (const ref of deal.evidenceRefs ?? []) if (ref.field === "materialPromises" && rangesOf(segment.text, ref.quote).length && normalize(ref.quote).includes(normalize(fact.value))) add("claim", "other", fact.value, ref.quote);
+  for (const fact of deal.unknowns) for (const ref of deal.evidenceRefs ?? []) if (ref.field === "unknowns" && rangesOf(segment.text, ref.quote).length) add("unknown", "other", fact.value, ref.quote, "affirmed", "uncertain");
+  candidates.push(...paymentCandidates(segment), ...deliveryCandidates(segment), ...conditionCandidates(segment));
+  return candidates;
+}
+
+function paymentCandidates(segment: DealIntakeSegment): DealCandidate[] {
+  const pattern = /PayPal\s+(?:Friends\s*(?:&|and)\s*Family|Goods\s*(?:&|and)\s*Services)|Friends\s*(?:&|and)\s*Family|Goods\s*(?:&|and)\s*Services|bank\s+transfer|cash(?:\s+on\s+(?:collection|pickup))?|(?:credit|debit)?\s*card(?:\s+payment)?|bank\s+payment/gi;
+  return [...segment.text.matchAll(pattern)].flatMap((match) => {
+    const start = match.index ?? 0; const methodEnd = start + match[0].length; const range = clauseRange(segment.text, start);
+    const clause = segment.text.slice(range.start, range.end); const before = segment.text.slice(Math.max(range.start, start - 35), start); const after = segment.text.slice(methodEnd, Math.min(range.end, methodEnd + 45));
+    const isFamily = /friends\s*(?:&|and)\s*family/i.test(match[0]);
+    const negated = /\b(?:no|not|never|without|reject(?:ed)?|declin(?:ed|e)|don['’]?t\s+(?:accept|use)|do\s+not\s+(?:accept|use))\s*$/i.test(before) || /^\s*(?:is\s+)?(?:not\s+(?:needed|accepted|required|requested)|isn['’]?t\s+(?:needed|accepted|required)|not\s+for\s+(?:this\s+)?purchase)\b/i.test(after);
+    const conditional = /\b(?:if|when|unless|depending\s+on|only\s+if)\b/i.test(clause);
+    const mentionOnly = /\b(?:mentioned|mention|help\s+text|example|not\s+(?:asking|requested)|no\s+.+\s+needed)\b/i.test(clause);
+    const correctionAt = segment.text.slice(range.start, range.end).search(/\b(?:actually|correction|corrected|instead|updated|changed\s+to|now\s+accepts?)\b/i);
+    const correctionOffset = correctionAt < 0 ? -1 : range.start + correctionAt;
+    const temporalStatus: DealCandidate["temporalStatus"] = correctionOffset >= 0 ? (start < correctionOffset ? "historical" : "corrected") : /\b(?:previously|used\s+to|no\s+longer)\b/i.test(before) ? "historical" : "current";
+    const explicitRequest = /\b(?:only|please\s+pay|requested|request(?:ed)?|accept(?:ed)?|pay\s+by|seller\s+asks?)\b/i.test(clause);
+    const paymentContext = ["payment_terms", "plain_text", "follow_up", "description"].includes(segment.field);
+    const intent: DealCandidate["intent"] = negated ? "rejected" : conditional ? "conditional" : isFamily ? (mentionOnly && !explicitRequest ? "mentioned" : explicitRequest || paymentContext ? "requested" : "mentioned") : mentionOnly ? "mentioned" : paymentContext ? "accepted" : "mentioned";
+    const polarity: DealCandidate["polarity"] = negated ? "negated" : "affirmed";
+    const modality: DealCandidate["modality"] = negated ? "asserted" : conditional ? "conditional" : "asserted";
+    const onlySuffix = /\bonly\b/i.test(after) ? " only" : "";
+    const value = isFamily ? "PayPal Friends & Family" : /goods\s*(?:&|and)\s*services/i.test(match[0]) ? "PayPal Goods & Services" : `${match[0].trim()}${onlySuffix}`;
+    return [{ factType: "payment_method", subject: "payment", value, sourceId: segment.id, quote: clause, startOffset: range.start, endOffset: range.end, polarity, modality, temporalStatus, intent }];
+  });
+}
+
+function deliveryCandidates(segment: DealIntakeSegment): DealCandidate[] {
+  const pattern = /shipping|postage|delivery|courier|collection|pickup/gi;
+  return [...segment.text.matchAll(pattern)].flatMap((match) => {
+    const start = match.index ?? 0; const range = clauseRange(segment.text, start); const before = segment.text.slice(Math.max(range.start, start - 35), start); const after = segment.text.slice(start + match[0].length, Math.min(range.end, start + match[0].length + 35));
+    if (/\breturn\s*$/i.test(before)) return [];
+    const negated = /\b(?:no|not|never|without|unavailable|doesn['’]?t\s+offer)\s*$/i.test(before) || /^\s*(?:not\s+(?:available|offered|included)|unavailable)\b/i.test(after);
+    const conditional = /\b(?:if|when|varies|depends|depending)\b/i.test(segment.text.slice(range.start, range.end));
+    return [{ factType: "delivery" as const, subject: "delivery" as const, value: match[0].toLocaleLowerCase(), sourceId: segment.id, quote: segment.text.slice(range.start, range.end), startOffset: range.start, endOffset: range.end, polarity: negated ? "negated" as const : "affirmed" as const, modality: conditional ? "conditional" as const : "asserted" as const, temporalStatus: "current" as const }];
+  });
+}
+
+function conditionCandidates(segment: DealIntakeSegment): DealCandidate[] {
+  const pattern = /for\s+parts\s+or\s+not\s+working|not\s+tested|untested|not\s+working|for\s+parts|spares?\s+(?:or\s+)?repairs?|needs?\s+repair|no\s+(?:power|chargers?(?:\s+included)?|controllers?(?:\s+included)?|adapters?(?:\s+included)?|strings(?:\s+included)?)|good\s+condition|fair\s+condition|second[- ]hand|refurbished|used|broken|damage|damaged|faulty|working|tested|missing/gi;
+  return [...segment.text.matchAll(pattern)].map((match) => {
+    const start = match.index ?? 0;
+    const range = clauseRange(segment.text, start);
+    const prefix = segment.text.slice(range.start, start).toLocaleLowerCase();
+    const lastIndex = (terms: string[]) => Math.max(-1, ...terms.map((term) => prefix.lastIndexOf(term)));
+    const checkoutIndex = lastIndex(["checkout", "payment page", "order page", "website"]);
+    const accessoryIndex = lastIndex(["charger", "adapter", "controller", "case", "strings", "accessory", "accessories"]);
+    const itemIndex = lastIndex(["item", "console", "laptop", "guitar", "phone", "camera", "device", "product", "screen", "keyboard", "bicycle"]);
+    const checkout = checkoutIndex > Math.max(accessoryIndex, itemIndex) && start - range.start - checkoutIndex <= 60;
+    const accessory = /\b(?:charger|adapter|controller|case|strings|accessory|accessories)\b/i.test(match[0]) || (accessoryIndex > itemIndex && start - range.start - accessoryIndex <= 60);
+    const testedUnknown = /^(?:not\s+tested|untested)$/i.test(match[0]);
+    const polarity = /\bnot\s+because\b/i.test(prefix) ? "negated" : /\bnot\s*$/i.test(prefix) && !/\bnot\s+because\s*$/i.test(prefix) ? "negated" : "affirmed";
+    const value = testedUnknown ? "tested" : match[0].toLocaleLowerCase();
+    return { factType: "condition", subject: checkout ? "checkout" : accessory ? "accessory" : "main_item", value, sourceId: segment.id, quote: match[0], startOffset: start, endOffset: start + match[0].length, polarity, modality: testedUnknown ? "uncertain" : "asserted", temporalStatus: "current" };
+  });
+}
+
+function clauseRange(text: string, offset: number): { start: number; end: number } {
+  let start = offset; let end = offset;
+  while (start > 0 && !/[.!?;\n]/.test(text[start - 1]!)) start--;
+  while (end < text.length && !/[.!?;\n]/.test(text[end]!)) end++;
+  while (start < end && /\s/.test(text[start]!)) start++;
+  while (end > start && /\s/.test(text[end - 1]!)) end--;
+  return { start, end };
+}
+
+function rangesOf(text: string, quote: string): { start: number; end: number }[] {
+  if (!quote) return [];
+  const ranges: { start: number; end: number }[] = []; let offset = 0;
+  while (offset <= text.length - quote.length) {
+    const start = text.indexOf(quote, offset); if (start < 0) break;
+    ranges.push({ start, end: start + quote.length }); offset = start + Math.max(quote.length, 1);
+  }
+  return ranges;
+}
+
+function candidateField(factType: DealCandidate["factType"]): string {
+  return ({ item: "item", model: "model", price: "price", currency: "currency", condition: "condition", payment_method: "paymentMethod", delivery: "deliveryTerms", claim: "materialPromises", unknown: "unknowns" })[factType];
+}
+
+function sourcePriority(field: DealSourceField): number {
+  return ({ title: 0, item_specifics: 1, description: 2, seller_notes: 3, payment_terms: 4, delivery_terms: 5, follow_up: 6, plain_text: 7, ocr: 8 })[field];
+}
+
+export function reconcileDealCandidates(candidates: DealCandidate[], segments: readonly { id: string; order?: number }[]): DealCandidate[] {
+  const orders = new Map(segments.map((segment, index) => [segment.id, segment.order ?? index]));
+  const corrections = candidates.filter((candidate) => candidate.factType === "payment_method" && candidate.temporalStatus === "corrected");
+  if (!corrections.length) return candidates;
+  return candidates.map((candidate) => {
+    if (candidate.factType !== "payment_method" || candidate.temporalStatus !== "current") return candidate;
+    const candidateOrder = orders.get(candidate.sourceId) ?? -1;
+    const superseded = corrections.some((correction) => {
+      if (correction.sourceId === candidate.sourceId) return correction.startOffset > candidate.startOffset;
+      return (orders.get(correction.sourceId) ?? -1) > candidateOrder;
+    });
+    return superseded ? { ...candidate, temporalStatus: "historical" } : candidate;
+  });
 }
 
 function extractLocally(text: string): DealExtraction {

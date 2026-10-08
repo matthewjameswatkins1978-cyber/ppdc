@@ -28,7 +28,7 @@ export async function extractDealFromImage(input: { image: Uint8Array; mimeType:
     const adapter = input.modelAdapter === null
       ? null
       : input.modelAdapter ?? configuredDealModelAdapter();
-    if (!adapter) return extractDealFromText(data.text, dealId, evidenceLabel, evidenceId);
+    if (!adapter) return extractDealFromText(data.text, dealId, evidenceLabel, evidenceId, "ocr");
     const extraction = await extractWithModel(adapter, data.text);
     return extractionToDeal({
       extraction,

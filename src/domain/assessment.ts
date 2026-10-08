@@ -1,5 +1,6 @@
 import type { Deal, Finding } from "./deal";
 import { questionsFor } from "./presentation";
+import { reconcileDealCandidates } from "./extract-text";
 
 export function assessDeal(deal: Deal): Deal {
   const findings: Finding[] = [];
@@ -17,14 +18,19 @@ export function assessDeal(deal: Deal): Deal {
     add({ severity: "amber", category: "price", title: "Price needs confirming", explanation: "A clear price and currency were not both established from the supplied evidence.", evidenceIds: [], ruleId: "price-missing", kind: "unknown" });
   }
 
-  const conditionConcern = Boolean(deal.condition && /for parts|spares or repair|faulty|damaged|damage|broken|missing|no power|no charger|no controllers|no adapter|not tested|untested|no strings|needs? repair/i.test(deal.condition.value));
+  const interpretedConditions = (deal.candidates ?? []).filter((candidate) => candidate.factType === "condition" && ["main_item", "accessory"].includes(candidate.subject) && ["current", "corrected"].includes(candidate.temporalStatus));
+  const conditionConcern = interpretedConditions.length
+    ? interpretedConditions.some((candidate) => candidate.modality === "uncertain" || (candidate.polarity === "affirmed" && /for parts|spares|faulty|damaged|damage|broken|no power|no charger|no controllers|no adapter|no strings|missing|not working|needs? repair/i.test(String(candidate.value))) || (candidate.polarity === "negated" && /\bworking\b/i.test(String(candidate.value))))
+    : Boolean(deal.condition && /for parts|spares or repair|faulty|damaged|damage|broken|missing|no power|no charger|no controllers|no adapter|not tested|untested|no strings|needs? repair/i.test(deal.condition.value));
   if (deal.condition?.kind === "fact" && !conditionConcern && !/not stated|unknown|unclear/i.test(deal.condition.value)) {
     add({ severity: "green", category: "condition", title: "Condition is described", explanation: `The supplied evidence describes the condition as “${deal.condition.value}”. This is a seller description, not an independent inspection.`, evidenceIds: knownEvidence(deal.condition), ruleId: "condition-stated", kind: "fact" });
   } else {
     add({ severity: "amber", category: "condition", title: conditionConcern ? "Disclosed condition limits need review" : "Condition needs clarification", explanation: conditionConcern ? `The supplied evidence describes: ${deal.condition?.value}. This is a seller description, not an independent inspection or an assessment of intent.` : "The supplied evidence does not establish the item condition.", evidenceIds: knownEvidence(deal.condition), ruleId: conditionConcern ? "condition-disclosed-faults" : "condition-unknown", kind: conditionConcern ? "fact" : "unknown" });
   }
 
-  if (deal.deliveryTerms && /varies|depends/i.test(deal.deliveryTerms.value)) {
+  if (deal.deliveryTerms && /\b(?:no|not|without|unavailable)\s+(?:shipping|postage|delivery)\b|\b(?:shipping|postage|delivery)\s+(?:is\s+)?not\s+(?:offered|available|included)\b/i.test(deal.deliveryTerms.value)) {
+    add({ severity: "amber", category: "delivery", title: "Shipping is not offered", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. It does not establish another delivery arrangement.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-unavailable", kind: "fact" });
+  } else if (deal.deliveryTerms && /varies|depends/i.test(deal.deliveryTerms.value)) {
     add({ severity: "amber", category: "delivery", title: "Final delivery cost needs confirmation", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. It does not establish the final delivery method and cost.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-variable", kind: "unknown" });
   } else if (deal.deliveryTerms) {
     add({ severity: "green", category: "delivery", title: "Delivery terms are stated", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. Check that the practical arrangement matches what you expect.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-stated", kind: "fact" });
@@ -33,10 +39,16 @@ export function assessDeal(deal: Deal): Deal {
   }
 
   const paymentConflicts = deal.unknowns.filter((fact) => fact.key === "conflict_payment method" && /friends\s*(?:&|and)\s*family/i.test(String(fact.value)));
-  const requestsFriendsFamily = Boolean(deal.paymentMethod && /friends\s*(?:&|and)\s*family/i.test(deal.paymentMethod.value)) || paymentConflicts.length > 0;
-  const paymentEvidenceIds = [...new Set([...knownEvidence(deal.paymentMethod), ...paymentConflicts.flatMap(({ evidenceIds }) => evidenceIds)])];
+  const structuredFamilyCandidates = (deal.candidates ?? []).filter((candidate) => candidate.factType === "payment_method" && /friends\s*(?:&|and)\s*family/i.test(String(candidate.value)));
+  const hasStructuredPaymentInterpretation = structuredFamilyCandidates.length > 0;
+  const activeFamilyCandidates = structuredFamilyCandidates.filter((candidate) =>
+    ["current", "corrected"].includes(candidate.temporalStatus) && candidate.polarity === "affirmed" && ["requested", "conditional", "accepted"].includes(candidate.intent ?? ""));
+  const requestsFriendsFamily = hasStructuredPaymentInterpretation
+    ? activeFamilyCandidates.length > 0
+    : Boolean(deal.paymentMethod && /friends\s*(?:&|and)\s*family/i.test(deal.paymentMethod.value)) || paymentConflicts.length > 0;
+  const paymentEvidenceIds = [...new Set([...(hasStructuredPaymentInterpretation ? activeFamilyCandidates.map(({ sourceId }) => sourceId) : knownEvidence(deal.paymentMethod)), ...paymentConflicts.flatMap(({ evidenceIds }) => evidenceIds)])].sort((a, b) => (deal.sourceSegments?.find(({ sourceId }) => sourceId === a)?.order ?? 0) - (deal.sourceSegments?.find(({ sourceId }) => sourceId === b)?.order ?? 0));
   if (requestsFriendsFamily) {
-    add({ severity: "red", category: "payment", title: "Friends & Family is requested", explanation: "The supplied evidence asks for PayPal Friends & Family for a purchase. That payment type is not intended for buying goods and does not provide the same purchase protection as Goods & Services.", whyItMatters: "This can leave you without the purchase protections you may expect for an item purchase.", recommendedAction: "Do not use Friends & Family for this purchase. Ask for a suitable goods payment method and review the terms yourself.", evidenceIds: paymentEvidenceIds, ruleId: "friends-family-purchase", kind: "paypal_rule" });
+    add({ severity: "red", category: "payment", title: "Friends & Family is requested", explanation: "The supplied evidence requests or offers PayPal Friends & Family for an item purchase. PayPal UK states Friends & Family payments are not eligible for PayPal Buyer Protection; eligible Goods & Services purchases may qualify subject to terms: https://www.paypal.com/uk/legalhub/paypal/useragreement-full", whyItMatters: "This payment type does not provide PayPal Buyer Protection for the purchase.", recommendedAction: "You could ask whether the seller accepts PayPal Goods & Services for this item purchase.", evidenceIds: paymentEvidenceIds, ruleId: "friends-family-purchase", kind: "paypal_rule" });
   } else if (deal.paymentMethod) {
     add({ severity: "green", category: "payment", title: "A payment method is stated", explanation: `The supplied evidence states: ${deal.paymentMethod.value}. This checker has not verified the payment setup or protection eligibility.`, evidenceIds: knownEvidence(deal.paymentMethod), ruleId: "payment-stated", kind: "fact" });
   } else {
@@ -116,12 +128,22 @@ export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
     return current;
   };
   const refs = (addition.evidenceRefs ?? []).map((ref) => ({ ...ref, evidenceId: addition.evidence[0]?.id ?? ref.evidenceId }));
+  const orderOffset = Math.max(-1, ...(existing.sourceSegments ?? []).map(({ order }) => order)) + 1;
+  const sourceSegments = [...(existing.sourceSegments ?? []), ...(addition.sourceSegments ?? []).map((segment, index) => ({ ...segment, order: orderOffset + index }))];
+  const candidates = reconcileDealCandidates([...(existing.candidates ?? []), ...(addition.candidates ?? [])], sourceSegments.map(({ sourceId, order }) => ({ id: sourceId, order })));
+  const currentPayments = candidates.filter((candidate) => candidate.factType === "payment_method" && ["current", "corrected"].includes(candidate.temporalStatus) && candidate.polarity === "affirmed" && ["requested", "conditional", "accepted"].includes(candidate.intent ?? ""));
+
+
   const item = mergeFact("item", existing.item, addition.item);
   const model = mergeFact("model", existing.model, addition.model);
   const price = mergeFact("price", existing.price, addition.price);
   const currency = mergeFact("currency", existing.currency, addition.currency);
   const condition = mergeFact("condition", existing.condition, addition.condition);
   const paymentMethod = mergeFact("payment method", existing.paymentMethod, addition.paymentMethod);
+  if ((addition.candidates ?? []).some((candidate) => candidate.factType === "payment_method" && candidate.temporalStatus === "corrected")) {
+    for (let index = conflicts.length - 1; index >= 0; index--) if (conflicts[index]?.key === "conflict_payment method") conflicts.splice(index, 1);
+  }
+  const reconciledPaymentMethod = currentPayments.length ? { key: "payment_method", value: [...new Set(currentPayments.map(({ value }) => String(value)))].join(" or "), kind: "fact" as const, evidenceIds: [...new Set(currentPayments.map(({ sourceId }) => sourceId))] } : paymentMethod;
   const deliveryTerms = mergeFact("delivery terms", existing.deliveryTerms, addition.deliveryTerms);
   const knownFields = new Set([
     item && "item", model && "model", price && "price", currency && "currency",
@@ -131,7 +153,8 @@ export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
     !String(fact.value).endsWith("not established by supplied text") || !knownFields.has(fact.key));
   const newUnknowns = addition.unknowns.filter((fact) => !String(fact.value).endsWith("not established by supplied text"));
   const merged: Deal = {
-    ...existing, item, model, price, currency, condition, paymentMethod, deliveryTerms,
+    ...existing, item, model, price, currency, condition, paymentMethod: reconciledPaymentMethod, deliveryTerms,
+    sourceSegments, candidates,
     materialPromises: [...existing.materialPromises, ...addition.materialPromises],
     priceDisplays: [...(existing.priceDisplays ?? []), ...(addition.priceDisplays ?? [])],
     unknowns: [...retainedUnknowns, ...newUnknowns, ...conflicts],
