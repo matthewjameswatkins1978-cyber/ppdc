@@ -36,6 +36,16 @@ test("new evidence updates the same deal and retains both provenance records", (
   assert.ok(updated.unknowns.every(({ value }) => !String(value).endsWith("not established by supplied text") || String(value).startsWith("model ")));
 });
 
+test("merging text and screenshot evidence preserves each quote's original source ID", () => {
+  const original = extractDealFromText("For sale: used guitar, £300.", "same-deal", "Listing", "listing-id");
+  const text = extractDealFromText("Seller says the headstock was repaired.", "same-deal", "Follow-up text", "text-id");
+  const screenshotOcr = extractDealFromText("PayPal Friends and Family requested.", "same-deal", "Screenshot OCR", "image-id");
+  const combined = addEvidenceToDeal(text, screenshotOcr);
+  const updated = addEvidenceToDeal(original, combined);
+  assert.ok(updated.evidenceRefs?.some(({ evidenceId, quote }) => evidenceId === "text-id" && quote.includes("headstock")));
+  assert.ok(updated.evidenceRefs?.some(({ evidenceId, quote }) => evidenceId === "image-id" && quote.includes("Friends and Family")));
+});
+
 test("repair disclosure improves the explanation without verifying quality or value", () => {
   const first = extractDealFromText("For sale: acoustic guitar. Model: Tanglewood Winterleaf TW4. Price £155. Repair history unknown.", "repair-deal", "Listing", "listing");
   const second = extractDealFromText("Seller says headstock was professionally repaired after a fall and is stable.", "repair-deal", "Seller message", "repair-message");

@@ -78,7 +78,8 @@ export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
     });
     return current;
   };
-  const refs = (addition.evidenceRefs ?? []).map((ref) => ({ ...ref, evidenceId: addition.evidence[0]?.id ?? ref.evidenceId }));
+  // Each reference is already bound to its source during extraction; do not collapse merged sources onto the first evidence item.
+  const refs = addition.evidenceRefs ?? [];
   const item = mergeFact("item", existing.item, addition.item);
   const model = mergeFact("model", existing.model, addition.model);
   const price = mergeFact("price", existing.price, addition.price);
