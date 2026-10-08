@@ -12,7 +12,7 @@ The feature is disabled unless `PPDC_ASTROPODS_ENABLED=true`. The adapter implem
 
 ## Trust boundary
 
-Astropods returns one JSON case under the existing `cases` response shape. PPDC validates its strict schema and checks source IDs, exact quotes, attribution, field allowlists, price/currency coherence, and conservative semantic policies. Seller statements remain seller claims. Model analysis is attached as `status: proposed` and cannot set findings, green/amber/red severity, seller trust, fraud probability, PayPal protection, amount, payment authorization, capture, or Passport state. Deterministic assessment is unchanged.
+Astropods returns one versioned model-only object (contract_version: ppdc-ai-analysis/1) containing cases. It does not return trusted provenance or top-level source attribution; PPDC attaches both after validating the proposal. The JSON Schema in src/domain/analysis-contract-v1.schema.json is generated from the runtime Zod validator and copied to the Astropods agent. Before using that agent, run bun run contract:check in D:\Projects\ppdc-ai-brain to detect copy drift.
 
 Exact quote presence is necessary, not sufficient. PPDC rejects unsupported fields, claims, contradictions, and price verdicts. It also replaces model-written explanatory prose and unknown/abstention wording with server-built text based on admitted quotes and allowlisted fields; the model cannot smuggle an unsupported conclusion through those display fields. Unsupported suggestions such as “pay now” and seller-trust verdicts are filtered from buyer questions.
 

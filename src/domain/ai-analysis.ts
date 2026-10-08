@@ -50,11 +50,11 @@ const ProposedCaseSchema = z.object({
     candidates: z.array(ContradictionCandidateSchema).min(2).max(8),
     resolution: z.null(),
   }).strict()).max(50),
-  buyer_questions: z.array(z.string().min(1).max(300)).max(20),
+  buyer_questions: z.array(z.string().min(1).max(300)).max(4),
   abstentions: z.array(NoteSchema).max(100),
   explanation: z.string().max(500),
 }).strict();
-export const ProposedAnalysisResponseSchema = z.object({ cases: z.array(ProposedCaseSchema).length(1) }).strict();
+export const ProposedAnalysisResponseSchema = z.object({ contract_version: z.literal(ANALYSIS_CONTRACT_VERSION), cases: z.array(ProposedCaseSchema).length(1) }).strict();
 
 export type CandidateObservation = z.infer<typeof CandidateSchema>;
 export type AnalysisNote = z.infer<typeof NoteSchema>;

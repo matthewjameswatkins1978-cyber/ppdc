@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
+import { z } from "zod";
 import { assessDeal } from "./assessment";
 import { extractDealFromText } from "./extract-text";
-import { prioritizeBuyerQuestions, redactAnalysisEvidence, validateProposedAnalysis, type AnalysisSource } from "./ai-analysis";
+import { ANALYSIS_CONTRACT_VERSION, ProposedAnalysisResponseSchema, prioritizeBuyerQuestions, redactAnalysisEvidence, validateProposedAnalysis, type AnalysisSource } from "./ai-analysis";
 import { questionsFor } from "./presentation";
 
 const metadata = {
@@ -15,11 +17,40 @@ const emptyCase = () => ({
   buyer_questions: [] as string[], abstentions: [] as unknown[], explanation: "",
 });
 const analyze = (sources: AnalysisSource[], item: ReturnType<typeof emptyCase>) =>
-  validateProposedAnalysis({ cases: [item] }, sources, metadata);
+  validateProposedAnalysis({ contract_version: "ppdc-ai-analysis/1", cases: [item] }, sources, metadata);
 const source = (source_id: string, text: string, overrides: Partial<AnalysisSource> = {}): AnalysisSource => ({
   source_id, speaker: "seller", kind: "marketplace_listing", text, ...overrides,
 });
 
+test("versioned model output schema matches PPDC validation and the Astropods copy", () => {
+  const schemaPath = new URL("./analysis-contract-v1.schema.json", import.meta.url);
+  const checkedInSchema = JSON.parse(readFileSync(schemaPath, "utf8"));
+  assert.deepEqual(checkedInSchema, z.toJSONSchema(ProposedAnalysisResponseSchema));
+
+  const agentSchemaPath = process.env.PPDC_AI_BRAIN_CONTRACT_PATH ?? "D:/Projects/ppdc-ai-brain/agent/analysis-contract-v1.schema.json";
+  if (existsSync(agentSchemaPath)) assert.deepEqual(JSON.parse(readFileSync(agentSchemaPath, "utf8")), checkedInSchema);
+
+  const valid = { contract_version: ANALYSIS_CONTRACT_VERSION, cases: [emptyCase()] };
+  assert.doesNotThrow(() => ProposedAnalysisResponseSchema.parse(valid));
+  assert.throws(() => ProposedAnalysisResponseSchema.parse({ ...valid, cases: [{ ...emptyCase(), buyer_questions: ["Which console model and storage capacity is actually being offered?", "Why does the requested payment method differ from the listing?", "What specific buyer protection applies to the proposed payment method?", "What is the console's condition?", "Are any accessories included?", "What is the estimated delivery timeframe?"] }] }));
+  const sourceAttribution = source("contract-source", "Used guitar, £275.");
+  const trusted = validateProposedAnalysis(valid, [sourceAttribution], metadata);
+  assert.equal(trusted.contractVersion, ANALYSIS_CONTRACT_VERSION);
+  assert.equal(trusted.status, "proposed");
+  assert.deepEqual(trusted.sourceAttribution, [{
+    source_id: "contract-source",
+    speaker: "seller",
+    kind: "marketplace_listing",
+  }]);
+  assert.equal(trusted.provenance.provider, "astropods");
+  assert.throws(() => validateProposedAnalysis({ ...valid, provenance: {} }, [sourceAttribution], metadata));
+  for (const forbidden of [
+    { ...valid, provenance: {} },
+    { ...valid, source_attribution: [] },
+    { ...valid, severity: "green" },
+    { ...valid, payment_action: "capture" },
+  ]) assert.throws(() => ProposedAnalysisResponseSchema.parse(forbidden));
+});
 test("redacts common email, phone, and card patterns before external analysis", () => {
   const sanitized = redactAnalysisEvidence("Contact me at matt@example.com or 07700 900123. Card 4111 1111 1111 1111; price £275.");
   assert.ok(sanitized.includes("[redacted email]"));
@@ -80,7 +111,7 @@ test("limits and prioritizes questions so payment and identity outrank cosmetic 
   assert.ok(!result.some((question) => /colour/i.test(question)));
 
   const item = emptyCase();
-  item.buyer_questions = ["What colour is it?", "Will you accept PayPal Goods and Services?", "Are accessories included?", "Which model is offered?", "What is the delivery date?", "Can you share repair records?"];
+  item.buyer_questions = ["What colour is it?", "Will you accept PayPal Goods and Services?", "Are accessories included?", "Which model is offered?"];
   const ai = analyze([source("listing", "Used guitar, £275.")], item);
   const deal = extractDealFromText("Used guitar, £275. PayPal Friends and Family requested.");
   const assessed = assessDeal({ ...deal, aiAnalysis: ai });
