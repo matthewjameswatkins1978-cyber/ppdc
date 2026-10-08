@@ -93,7 +93,10 @@ export function extractionToDeal(input: {
   const absent = (field: ExtractionField, label: string) => used.has(field) ? [] : [{
     key: label, value: `${label} not established by supplied text`, kind: "unknown" as const, evidenceIds: [evidence.id],
   }];
-  const unknownFacts = result.unknowns.map((value, index) => fact(`unknown_${index + 1}`, value));
+  const unknownFacts = result.unknowns.map((value, index) => {
+    const conflictField = value.match(/^Conflicting ([\w ]+?) specifications:/i)?.[1]?.trim().toLocaleLowerCase().replace(/\s+/g, "_");
+    return fact(conflictField ? `conflict_${conflictField}` : `unknown_${index + 1}`, value);
+  });
   unknownFacts.push(...absent("item", "item"), ...absent("model", "model"), ...absent("price", "price"),
     ...absent("currency", "currency"), ...absent("condition", "condition"),
     ...absent("paymentMethod", "payment method"), ...absent("deliveryTerms", "delivery terms"));
