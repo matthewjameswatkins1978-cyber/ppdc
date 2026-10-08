@@ -50,7 +50,7 @@ export function assessDeal(deal: Deal): Deal {
     add({ severity: "amber", category: "seller-claim", title: "Seller claim is unverified", explanation: `The seller's statement “${promise.value}” is recorded, but has not been independently verified.`, evidenceIds: promise.evidenceIds, ruleId: `claim-${index + 1}`, kind: "fact" });
   }
   const questions = questionsFor(deal);
-  const meaningfulUnknowns = deal.unknowns.filter((fact) => !String(fact.value).endsWith("not established by supplied text") && !fact.key.startsWith("conflict_") && !/does not state a specific payment method|does not state a specific payment method or delivery arrangement/i.test(String(fact.value)) && !unknownAlreadyCommunicated(String(fact.value), questions, deal));
+  const meaningfulUnknowns = deal.unknowns.filter((fact) => !String(fact.value).endsWith("not established by supplied text") && !fact.key.startsWith("conflict_") && !/does not state a specific payment method|does not state a specific payment method or delivery arrangement/i.test(String(fact.value)) && !unknownAlreadyCommunicated(String(fact.value), questions, deal, findings));
   if (meaningfulUnknowns.length > 0) {
     add({ severity: "amber", category: "unknowns", title: "Specific details remain unresolved", explanation: meaningfulUnknowns.map(({ value }) => value).join("; "), evidenceIds: [...new Set(meaningfulUnknowns.flatMap(({ evidenceIds }) => evidenceIds))], ruleId: "recorded-unknowns", kind: "unknown" });
   }
@@ -70,10 +70,10 @@ export function assessDeal(deal: Deal): Deal {
   return { ...deal, status: "ready_for_decision", findings, conclusion };
 }
 
-function unknownAlreadyCommunicated(value: string, questions: string[], deal: Deal): boolean {
+function unknownAlreadyCommunicated(value: string, questions: string[], deal: Deal, currentFindings: Finding[]): boolean {
   const text = value.toLocaleLowerCase();
   const questionText = questions.join(" ").toLocaleLowerCase();
-  const conditionFinding = deal.findings.some(({ ruleId }) => ruleId === "condition-disclosed-faults");
+  const conditionFinding = currentFindings.some(({ ruleId }) => ruleId === "condition-disclosed-faults");
   const checks: boolean[] = [];
   const requireQuestion = (source: RegExp, question: RegExp, alternative = false) => {
     if (!source.test(text)) return;
@@ -84,13 +84,15 @@ function unknownAlreadyCommunicated(value: string, questions: string[], deal: De
   requireQuestion(/cosmetic defects|screen marks|scratches|scuffs/, /screen marks|close-up photos/);
   requireQuestion(/exact year|model year/, /exact year|model year/);
   requireQuestion(/included accessories|accessories/, /accessories/);
-  requireQuestion(/condition-specific seller note/, /condition-specific details/);
-  requireQuestion(/which units work|individual faults|each laptop|job lot/, /which exact laptop/);
+  requireQuestion(/condition-specific seller note/, /condition-specific faults|condition-specific details|faults or repairs/);
+  requireQuestion(/which units work|individual faults|each laptop|job lot/, /which specific item|which exact laptop/);
   requireQuestion(/maintenance history/, /maintenance or repairs/);
   requireQuestion(/repair history|whether any repairs|repairs were done/, /repair|repairs/);
   requireQuestion(/tests were performed|what tests|testing beyond|not tested/, /tests or repairs/);
-  requireQuestion(/payment method/, /payment method/, deal.findings.some(({ ruleId }) => ruleId === "payment-unknown"));
-  requireQuestion(/delivery cost|delivery arrangement|how it will be delivered/, /delivery method|delivered|delivery or collection/, deal.findings.some(({ ruleId }) => ruleId === "delivery-unknown"));
+  requireQuestion(/payment method/, /payment method/, currentFindings.some(({ ruleId }) => ruleId === "payment-unknown"));
+  requireQuestion(/delivery cost|delivery arrangement|how it will be delivered/, /delivery method|delivered|delivery or collection/, currentFindings.some(({ ruleId }) => ruleId === "delivery-unknown"));
+  requireQuestion(/region/, /region.*compatibility|compatibility.*region/);
+  requireQuestion(/return postage|return period|returns/, /return period|return postage/);
   requireQuestion(/broken|damaged|missing|no power|no charger|no controllers|no adapter|no os|hard drive|no strings|not working/, /condition|faulty|tests or repairs/, conditionFinding);
 
   return checks.length > 0 && checks.every(Boolean);

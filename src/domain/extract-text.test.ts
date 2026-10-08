@@ -83,11 +83,12 @@ test("recognizes adjacent laptop generations and Switch OLED without guessing", 
   assert.ok(oled.materialPromises.some(({ value }) => /good condition and perfect working order/i.test(value)));
   assert.ok(!questionsFor(oled).some((question) => /accessories are included/i.test(question)));
 });
-test("keeps specific questions while avoiding repeated unknown and variable-delivery cards", () => {
+test("keeps unasked details visible beyond the question cap and explains variable delivery", () => {
   const deal = assessDeal(extractDealFromText("Apple iPhone 13, 128 GB, unlocked. Price £220. Used. Battery health and exact cosmetic defects are not stated. No charger included. Delivery varies; no returns accepted.", "synthetic-specific-unknowns"));
   const questions = questionsFor(deal);
   assert.ok(deal.unknowns.some(({ value }) => /Battery health and exact cosmetic defects/.test(value)));
-  assert.ok(!deal.findings.some(({ ruleId }) => ruleId === "recorded-unknowns"));
+  const unknownFinding = deal.findings.find(({ ruleId }) => ruleId === "recorded-unknowns");
+  assert.match(unknownFinding?.explanation ?? "", /exact cosmetic defects/);
   assert.ok(deal.findings.some(({ ruleId, severity }) => ruleId === "delivery-variable" && severity === "amber"));
   assert.ok(questions.some((question) => /final delivery cost/i.test(question)));
   assert.ok(questions.length <= 4);
