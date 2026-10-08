@@ -1,0 +1,22 @@
+# AI Brain 003 offline quality review
+
+This qualitative comparison uses the four recorded cases and one earlier recorded pilot response in `D:\Projects\ppdc-ai-brain\agent\pilot-cases.json` and `pilot-result.json`, plus the six synthetic cases in `safety-cases.json`. The older pilot response used a different output shape and is evidence for review only; it is not accepted by this bridge. No additional inference is claimed from fixtures that have no recorded model result.
+
+| Case | Deterministic PPDC | Recorded model contribution | Bridge admission |
+| --- | --- | --- | --- |
+| Ordinary Squier listing | Regex parser extracts model, £275, condition, payment and delivery when wording matches known patterns. | Adds useful optional questions about accessories, returns and delivery timeframe. | Exact supported fields and quotes may be shown; unsupported free prose is replaced with quoted excerpts. |
+| Repaired Fender listing | Current parser may not extract the bridge-plate repair because it is not phrased with one of its claim markers. | Recognizes the bridge-plate replacement after a cracked saddle and suggests repair-record questions. | Repair history can be admitted only when the quote includes the proposed value; repair quality/stability remain unknown. This is the clearest useful improvement over the current narrow parser. |
+| Switch OLED vs Lite and payment conflict | Repeated evidence can preserve item/payment conflicts as unknowns and existing assessment rules flag Friends & Family. | Organizes model/storage and payment conflicts and suggests which details to clarify. The old response also produced six questions, exceeding the four-question contract, and proposed a false protection contradiction from a seller claim. | The bridge caps/prioritizes questions, preserves only distinct evidence-backed same-field conflicts, and rejects the protection-policy contradiction. |
+| Yamaha listing with injected instructions | Deterministic parser extracts ordinary listing facts and ignores unrelated instructions because it does not interpret them as fields. | Recorded response ignored the embedded request to change the answer. | Strict fields, evidence validation, no model authority, sanitized questions, and deterministic findings remain in force. |
+| Seller claim / AirPods label | The local parser does not reliably distinguish accessory OCR from main-item identity or richly structure seller claims. | Safety suite defines these cases but has no recorded output for comparison. | Regression tests keep seller claims attributed and reject accessory-label-to-main-item promotion. |
+| Unverified comparable price / incomplete repair | Local parser generally does not establish market comparisons or repair quality. | No recorded output for comparison. | Regression tests reject price verdicts and repair-quality inferences; preserve unknowns. |
+
+The primary measurable improvement is narrower than “AI is more accurate”: a recorded guitar case exposes repair context that the current regex extractor misses and turns that gap into useful questions. For the conflict case, the LLM's organization helps, but the deterministic system already identifies important payment concerns; the new validator removes a specific unsafe false contradiction. The bridge does not claim model superiority for all cases.
+
+## Regression scope
+
+Offline tests exercise false payment-protection contradiction, accessory-label ambiguity, six-question prioritization, repaired-guitar attribution/unknowns, prompt injection, unsupported market-price claims, exact source/quote checks, currency coherence, UTF-8 `£`, model-prose replacement, and common contact/card redaction. Transport tests replay local and hosted documented routes without credentials or network inference.
+
+## Limits
+
+This is a qualitative comparison of one older recorded pilot run and deterministic code, not a statistically powered benchmark. The pilot response's six questions and unsupported protection contradiction demonstrate why the old output cannot be treated as trusted. The optional single live synthetic request, if run after offline checks, validates integration shape only; it does not establish broad model quality.

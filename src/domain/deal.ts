@@ -1,4 +1,5 @@
 import type { ResearchResult, ResearchRun } from "./research";
+import type { TrustedDealAnalysis } from "./ai-analysis";
 
 export type EvidenceSource = "user" | "paypal" | "channel3" | "parallel" | "carrier";
 export type AssertionKind = "fact" | "paypal_rule" | "inference" | "unknown";
@@ -11,6 +12,8 @@ export interface Evidence {
   label: string;
   capturedAt: string;
   private: boolean;
+  /** User-reported speaker label; it is provenance metadata, not identity verification. */
+  speaker?: "seller" | "buyer" | "unknown";
 }
 
 export interface EvidenceReference {
@@ -59,4 +62,6 @@ export interface Deal {
   researchRuns?: ResearchRun[];
   researchResults?: ResearchResult[];
   researchQuestions?: string[];
+  /** Optional model analysis remains proposed; it never supplies findings or payment authority. */
+  aiAnalysis?: TrustedDealAnalysis;
 }
