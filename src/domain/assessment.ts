@@ -1,4 +1,5 @@
 import type { Deal, Finding } from "./deal";
+import { questionsFor } from "./presentation";
 
 export function assessDeal(deal: Deal): Deal {
   const findings: Finding[] = [];
@@ -9,19 +10,23 @@ export function assessDeal(deal: Deal): Deal {
     const fact = deal.model ?? deal.item!;
     add({ severity: "green", category: "item", title: "Item is identified", explanation: `The supplied evidence identifies this as ${fact.value}.`, evidenceIds: knownEvidence(fact), ruleId: "item-identified", kind: "fact" });
   }
+  const displayedConversions = (deal.priceDisplays ?? []).map(({ amount, currency }) => `${currency} ${amount} (approximate conversion)`).join(", ");
   if (deal.price && deal.currency) {
-    add({ severity: "green", category: "price", title: "Price is stated", explanation: `The listing states ${deal.currency.value} ${deal.price.value}.`, evidenceIds: [...knownEvidence(deal.price), ...knownEvidence(deal.currency)], ruleId: "price-stated", kind: "fact" });
+    add({ severity: "green", category: "price", title: "Price is stated", explanation: `The listing states ${deal.currency.value} ${deal.price.value}.${displayedConversions ? ` The marketplace also displays ${displayedConversions}.` : ""}`, evidenceIds: [...knownEvidence(deal.price), ...knownEvidence(deal.currency), ...(deal.priceDisplays ?? []).map(({ evidenceId }) => evidenceId)], ruleId: "price-stated", kind: "fact" });
   } else {
     add({ severity: "amber", category: "price", title: "Price needs confirming", explanation: "A clear price and currency were not both established from the supplied evidence.", evidenceIds: [], ruleId: "price-missing", kind: "unknown" });
   }
 
-  if (deal.condition?.kind === "fact" && !/not stated|unknown|unclear/i.test(deal.condition.value)) {
+  const conditionConcern = Boolean(deal.condition && /for parts|spares or repair|faulty|damaged|damage|broken|missing|no power|no charger|no controllers|no adapter|not tested|untested|no strings|needs? repair/i.test(deal.condition.value));
+  if (deal.condition?.kind === "fact" && !conditionConcern && !/not stated|unknown|unclear/i.test(deal.condition.value)) {
     add({ severity: "green", category: "condition", title: "Condition is described", explanation: `The supplied evidence describes the condition as “${deal.condition.value}”. This is a seller description, not an independent inspection.`, evidenceIds: knownEvidence(deal.condition), ruleId: "condition-stated", kind: "fact" });
   } else {
-    add({ severity: "amber", category: "condition", title: "Condition needs clarification", explanation: "The supplied evidence does not establish the item's condition.", evidenceIds: knownEvidence(deal.condition), ruleId: "condition-unknown", kind: "unknown" });
+    add({ severity: "amber", category: "condition", title: conditionConcern ? "Disclosed condition limits need review" : "Condition needs clarification", explanation: conditionConcern ? `The supplied evidence describes: ${deal.condition?.value}. This is a seller description, not an independent inspection or an assessment of intent.` : "The supplied evidence does not establish the item condition.", evidenceIds: knownEvidence(deal.condition), ruleId: conditionConcern ? "condition-disclosed-faults" : "condition-unknown", kind: conditionConcern ? "fact" : "unknown" });
   }
 
-  if (deal.deliveryTerms) {
+  if (deal.deliveryTerms && /varies|depends/i.test(deal.deliveryTerms.value)) {
+    add({ severity: "amber", category: "delivery", title: "Final delivery cost needs confirmation", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. It does not establish the final delivery method and cost.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-variable", kind: "unknown" });
+  } else if (deal.deliveryTerms) {
     add({ severity: "green", category: "delivery", title: "Delivery terms are stated", explanation: `The supplied evidence says: ${deal.deliveryTerms.value}. Check that the practical arrangement matches what you expect.`, evidenceIds: knownEvidence(deal.deliveryTerms), ruleId: "delivery-stated", kind: "fact" });
   } else {
     add({ severity: "amber", category: "delivery", title: "Delivery or collection is unclear", explanation: "No delivery or collection arrangement was established from the supplied evidence.", evidenceIds: [], ruleId: "delivery-unknown", kind: "unknown" });
@@ -38,11 +43,16 @@ export function assessDeal(deal: Deal): Deal {
     add({ severity: "amber", category: "payment", title: "Payment method is not stated", explanation: "The supplied evidence does not establish how payment is expected to be made.", evidenceIds: [], ruleId: "payment-unknown", kind: "unknown" });
   }
 
+  for (const conflict of deal.unknowns.filter((fact) => fact.key.startsWith("conflict_") && fact.key !== "conflict_payment method")) {
+    add({ severity: "amber", category: "conflict", title: "Conflicting details need confirmation", explanation: String(conflict.value), evidenceIds: conflict.evidenceIds, ruleId: conflict.key, kind: "unknown" });
+  }
   for (const [index, promise] of deal.materialPromises.entries()) {
     add({ severity: "amber", category: "seller-claim", title: "Seller claim is unverified", explanation: `The seller's statement “${promise.value}” is recorded, but has not been independently verified.`, evidenceIds: promise.evidenceIds, ruleId: `claim-${index + 1}`, kind: "fact" });
   }
-  if (deal.unknowns.length > 0) {
-    add({ severity: "amber", category: "unknowns", title: "Some details remain unknown", explanation: deal.unknowns.map(({ value }) => value).join("; "), evidenceIds: [...new Set(deal.unknowns.flatMap(({ evidenceIds }) => evidenceIds))], ruleId: "recorded-unknowns", kind: "unknown" });
+  const questions = questionsFor(deal);
+  const meaningfulUnknowns = deal.unknowns.filter((fact) => !String(fact.value).endsWith("not established by supplied text") && !fact.key.startsWith("conflict_") && !/does not state a specific payment method|does not state a specific payment method or delivery arrangement/i.test(String(fact.value)) && !unknownAlreadyCommunicated(String(fact.value), questions, deal, findings));
+  if (meaningfulUnknowns.length > 0) {
+    add({ severity: "amber", category: "unknowns", title: "Specific details remain unresolved", explanation: meaningfulUnknowns.map(({ value }) => value).join("; "), evidenceIds: [...new Set(meaningfulUnknowns.flatMap(({ evidenceIds }) => evidenceIds))], ruleId: "recorded-unknowns", kind: "unknown" });
   }
 
   const redCount = findings.filter(({ severity }) => severity === "red").length;
@@ -60,6 +70,33 @@ export function assessDeal(deal: Deal): Deal {
   return { ...deal, status: "ready_for_decision", findings, conclusion };
 }
 
+function unknownAlreadyCommunicated(value: string, questions: string[], deal: Deal, currentFindings: Finding[]): boolean {
+  const text = value.toLocaleLowerCase();
+  const questionText = questions.join(" ").toLocaleLowerCase();
+  const conditionFinding = currentFindings.some(({ ruleId }) => ruleId === "condition-disclosed-faults");
+  const checks: boolean[] = [];
+  const requireQuestion = (source: RegExp, question: RegExp, alternative = false) => {
+    if (!source.test(text)) return;
+    checks.push(question.test(questionText) || alternative);
+  };
+
+  requireQuestion(/battery health|battery duration|battery runtime/, /battery/);
+  requireQuestion(/cosmetic defects|screen marks|scratches|scuffs/, /screen marks|close-up photos/);
+  requireQuestion(/exact year|model year/, /exact year|model year/);
+  requireQuestion(/included accessories|accessories/, /accessories/);
+  requireQuestion(/condition-specific seller note/, /condition-specific faults|condition-specific details|faults or repairs/);
+  requireQuestion(/which units work|individual faults|each laptop|job lot/, /which specific item|which exact laptop/);
+  requireQuestion(/maintenance history/, /maintenance or repairs/);
+  requireQuestion(/repair history|whether any repairs|repairs were done/, /repair|repairs/);
+  requireQuestion(/tests were performed|what tests|testing beyond|not tested/, /tests or repairs/);
+  requireQuestion(/payment method/, /payment method/, currentFindings.some(({ ruleId }) => ruleId === "payment-unknown"));
+  requireQuestion(/delivery cost|delivery arrangement|how it will be delivered/, /delivery method|delivered|delivery or collection/, currentFindings.some(({ ruleId }) => ruleId === "delivery-unknown"));
+  requireQuestion(/region/, /region.*compatibility|compatibility.*region/);
+  requireQuestion(/return postage|return period|returns/, /return period|return postage/);
+  requireQuestion(/broken|damaged|missing|no power|no charger|no controllers|no adapter|no os|hard drive|no strings|not working/, /condition|faulty|tests or repairs/, conditionFinding);
+
+  return checks.length > 0 && checks.every(Boolean);
+}
 export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
   const conflicts: Deal["unknowns"] = [];
   const mergeFact = <T extends { value: string | number; evidenceIds: string[] }>(
@@ -96,6 +133,7 @@ export function addEvidenceToDeal(existing: Deal, addition: Deal): Deal {
   const merged: Deal = {
     ...existing, item, model, price, currency, condition, paymentMethod, deliveryTerms,
     materialPromises: [...existing.materialPromises, ...addition.materialPromises],
+    priceDisplays: [...(existing.priceDisplays ?? []), ...(addition.priceDisplays ?? [])],
     unknowns: [...retainedUnknowns, ...newUnknowns, ...conflicts],
     evidence: [...existing.evidence, ...addition.evidence],
     evidenceRefs: [...(existing.evidenceRefs ?? []), ...refs],

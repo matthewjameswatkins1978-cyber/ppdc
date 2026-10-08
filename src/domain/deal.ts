@@ -47,6 +47,8 @@ export interface Deal {
   model?: DealFact<string>;
   price?: DealFact<number>;
   currency?: DealFact<string>;
+  priceDisplays?: { amount: number; currency: string; kind: "approximate_conversion"; evidenceId: string; quote: string }[];
+
   condition?: DealFact<string>;
   paymentMethod?: DealFact<string>;
   deliveryTerms?: DealFact<string>;
