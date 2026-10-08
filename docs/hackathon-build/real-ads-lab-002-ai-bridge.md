@@ -39,4 +39,27 @@ PR #8 and this branch touch the same domain seams. Keep both sets of responsibil
 3. In `presentation.ts`, PR #8 currently prioritizes deterministic questions, then appends separately prioritized model questions. This branch generates a broader deterministic candidate set and ranks payment protection, conflicts, faults, and other concerns before the four-question cap. During integration, pass only validated AI questions into the domain question flow and apply one shared priority-aware cap to the combined candidates; do not let model questions displace Friends & Family or other higher-priority deterministic concerns.
 4. When combining branches, start from the latest reviewed PR #8 head, resolve these three files explicitly, and inspect the merged diff. Run cross-project contract tests, all PPDC tests, typecheck, production build, benchmark validation, audit, and secret scan. Keep both PRs draft and unmerged until Matthew reviews the combined result.
 
+## Source-aware deterministic contract (004A)
+
+`extractDealFromIntake` retains each original field and ordered follow-up as a separate source segment. Candidate quotes and offsets point into that segment; reconciliation keeps historical and corrected candidates available. The legacy `extractDealFromText` signature remains supported for plain text and OCR; the local OCR-only fallback tags its source as OCR.
+
+When integrating PR #8, validate proposed AI facts against the same source IDs and exact excerpts. The server continues to own trusted provenance and deterministic assessment remains authoritative. Preserve `sourceSegments` and candidates when adding evidence, then rerun deterministic reconciliation. Do not let AI candidates alter payment authority, severity, or the buyer's decision.
+
 The AI proposal remains optional and subordinate: it cannot change severity, accepted deal facts, currency/payment amount, or PayPal authority. An unresolved conflict remains unresolved until buyer-provided evidence or a stronger source supports a value.
+
+## 004A-R1 compatibility boundary
+
+The deterministic source-aware intake now validates evidence references against the referenced source segment, source field, exact quote, and character offsets. Legacy references without source metadata are preserved when their evidence ID exists, even when structured sources are later added; quote verification is unavailable for those references and is not claimed. Candidate proposals from an AI bridge still need the same source ID, exact quote, offset, and subject validation before integration. This PR does not implement or prove the PR #8 bridge contract.
+
+Before combining PR #8, add mock-only contract tests that cover:
+
+- known source ID plus exact quote and correct offsets is accepted;
+- unknown source ID, wrong field, quote mismatch, stale offsets, and duplicate IDs are rejected or omitted;
+- repeated text in separate source fields stays bound to the cited source;
+- unsupported candidate fields, excess questions, and model supplied severity or authority are rejected;
+- deterministic assessment and payment authority remain unchanged by AI proposal content;
+- the combined deterministic and AI question list respects one shared four-question cap without displacing payment protection or source conflicts.
+
+## Deferred 004B diagnostics
+
+The focused R1 corrections do not resolve the broader identity and context limits tracked in Issues #10 and #11. Keep these as explicit follow-up work: ambiguous item and model identity across title and item specifics; price and currency association across unrelated fields; condition attribution to the correct item or accessory in mixed lots; and delivery options that are conditional or tied to a particular payment method. Resolve these with source-specific diagnostics and buyer questions, not a larger warning count or an automatic choice of one disputed value.

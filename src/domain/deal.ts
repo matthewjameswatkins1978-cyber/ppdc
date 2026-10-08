@@ -4,6 +4,35 @@ export type EvidenceSource = "user" | "paypal" | "channel3" | "parallel" | "carr
 export type AssertionKind = "fact" | "paypal_rule" | "inference" | "unknown";
 export type FindingSeverity = "green" | "amber" | "red";
 
+export type DealSourceField = "title" | "item_specifics" | "description" | "seller_notes" | "payment_terms" | "delivery_terms" | "follow_up" | "plain_text" | "ocr";
+export type CandidateSubject = "main_item" | "accessory" | "payment" | "delivery" | "checkout" | "other";
+export type CandidatePolarity = "affirmed" | "negated";
+export type CandidateModality = "asserted" | "conditional" | "uncertain";
+export type CandidateTemporalStatus = "current" | "historical" | "corrected";
+export type CandidateIntent = "requested" | "mentioned" | "rejected" | "conditional" | "accepted";
+
+/** Original source text is retained per field; candidate offsets are relative to it. */
+export interface DealSourceSegment {
+  sourceId: string;
+  fieldType: DealSourceField;
+  originalText: string;
+  order: number;
+}
+
+/** Proposed extraction only. It is source-bound and never grants payment authority. */
+export interface DealCandidate {
+  factType: "item" | "model" | "price" | "currency" | "condition" | "payment_method" | "delivery" | "claim" | "unknown";
+  subject: CandidateSubject;
+  value: string | number;
+  sourceId: string;
+  quote: string;
+  startOffset: number;
+  endOffset: number;
+  polarity: CandidatePolarity;
+  modality: CandidateModality;
+  temporalStatus: CandidateTemporalStatus;
+  intent?: CandidateIntent;
+}
 export interface Evidence {
   id: string;
   source: EvidenceSource;
@@ -17,6 +46,9 @@ export interface EvidenceReference {
   field: string;
   evidenceId: string;
   quote: string;
+  sourceField?: DealSourceField;
+  startOffset?: number;
+  endOffset?: number;
 }
 
 export interface DealFact<T = unknown> {
@@ -56,6 +88,8 @@ export interface Deal {
   unknowns: DealFact<string>[];
   evidence: Evidence[];
   evidenceRefs?: EvidenceReference[];
+  sourceSegments?: DealSourceSegment[];
+  candidates?: DealCandidate[];
   findings: Finding[];
   conclusion?: string;
   researchRuns?: ResearchRun[];
