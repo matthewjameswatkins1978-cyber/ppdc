@@ -1,4 +1,5 @@
 import type { Deal, Finding } from "./deal";
+import { prioritizeBuyerQuestions } from "./ai-analysis";
 
 /** First-party questions are a presentation aid derived from current unknowns and research. */
 export function questionsFor(deal: Deal): string[] {
@@ -12,7 +13,7 @@ export function questionsFor(deal: Deal): string[] {
   if (deal.unknowns.some((fact) => /repair|headstock|tuning/i.test(`${fact.key} ${fact.value}`))) candidates.push("Can you share current close-up photos of the repair and explain whether it affects tuning or stability?");
   if (deal.unknowns.some((fact) => /current photo.*not shown|current photos? unavailable/i.test(String(fact.value)))) candidates.push("Can you share a current photo showing the exact item and model label?");
   for (const conflict of deal.unknowns.filter((fact) => fact.key.startsWith("conflict_"))) candidates.push(`Can you confirm the agreed ${conflict.key.slice("conflict_".length)}?`);
-  return [...new Set(candidates)].slice(0, 4);
+  return prioritizeBuyerQuestions([...candidates]);
 }
 
 /** Surface existing findings only; severity controls order, not a new assessment. */

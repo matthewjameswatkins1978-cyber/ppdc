@@ -1,4 +1,5 @@
 import type { ResearchResult, ResearchRun } from "./research";
+import type { TrustedDealAnalysis } from "./ai-analysis";
 
 export type EvidenceSource = "user" | "paypal" | "channel3" | "parallel" | "carrier";
 export type AssertionKind = "fact" | "paypal_rule" | "inference" | "unknown";
@@ -59,4 +60,6 @@ export interface Deal {
   researchRuns?: ResearchRun[];
   researchResults?: ResearchResult[];
   researchQuestions?: string[];
+  /** Optional model analysis remains proposed; it never supplies findings or payment authority. */
+  aiAnalysis?: TrustedDealAnalysis;
 }
