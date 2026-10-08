@@ -1,0 +1,5447 @@
+[
+  {
+    "caseId": "SYN001",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN001-TITLE",
+        "text": "Bracken Row bookcase, five shelves"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN001-ITEM-SPECIFICS",
+          "text": "Pine veneer; 180 cm high; 72 cm wide; three adjustable shelves"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN001-DESCRIPTION",
+        "text": "Used in study for two years. Shelves are straight and all pegs are present."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN001-SELLER-NOTES",
+        "text": "Small nick on lower right side; assembled in a smoke-free home."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN001-PAYMENT-TERMS",
+        "text": "£45 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN001-DELIVERY-TERMS",
+        "text": "Collect from fictional Westmere; fits in a hatchback with seats down."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN001",
+      "scenarioCategory": "ordinary",
+      "productCategory": "furniture",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN001-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN001-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN001-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN001-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN001-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN001-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN001",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 45,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN001-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN001-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN001-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN001-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN001-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN001-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN001-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN001-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.280Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN001-INTAKE",
+            "quote": "£45"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN001-INTAKE",
+            "quote": "£45"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN001-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN001-INTAKE",
+            "quote": "cash on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 45.",
+            "evidenceIds": [
+              "SYN001-INTAKE",
+              "SYN001-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN001-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN001-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN002",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN002-TITLE",
+        "text": "Aurelia Slate 10 tablet, 64 GB"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN002-ITEM-SPECIFICS",
+          "text": "Wi-Fi model; charcoal; includes folio and USB-C cable"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN002-DESCRIPTION",
+        "text": "Used mainly for reading. Screen has no scratches that I can see; battery lasts through an evening."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN002-SELLER-NOTES",
+        "text": "Factory reset this morning; charger not included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN002-PAYMENT-TERMS",
+        "text": "£95 through marketplace checkout."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN002-DELIVERY-TERMS",
+        "text": "Tracked delivery included."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN002",
+      "scenarioCategory": "ordinary",
+      "productCategory": "tablet",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN002-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN002-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN002-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN002-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN002-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN002-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Which payment method is being requested for this purchase?"
+      ],
+      "assessedDeal": {
+        "id": "SYN002",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 95,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN002-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN002-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN002-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "delivery included",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN002-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN002-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN002-INTAKE"
+            ]
+          },
+          {
+            "key": "payment method",
+            "value": "payment method not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN002-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN002-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.285Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN002-INTAKE",
+            "quote": "£95"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN002-INTAKE",
+            "quote": "£95"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN002-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN002-INTAKE",
+            "quote": "delivery included"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 95.",
+            "evidenceIds": [
+              "SYN002-INTAKE",
+              "SYN002-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN002-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: delivery included. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN002-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "payment",
+            "title": "Payment method is not stated",
+            "explanation": "The supplied evidence does not establish how payment is expected to be made.",
+            "evidenceIds": [],
+            "ruleId": "payment-unknown",
+            "kind": "unknown",
+            "id": "payment-unknown"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN003",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN003-TITLE",
+        "text": "Merefield kettle, brushed steel"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN003-ITEM-SPECIFICS",
+          "text": "1.7 L capacity; 3 kW; removable filter"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN003-DESCRIPTION",
+        "text": "Boils a full kettle and switches off. Used daily for about a year."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN003-SELLER-NOTES",
+        "text": "Descaled last month; minor water marks."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN003-PAYMENT-TERMS",
+        "text": "£12 cash."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN003-DELIVERY-TERMS",
+        "text": "Collection from fictional Larch End."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN003",
+      "scenarioCategory": "ordinary",
+      "productCategory": "kitchen_appliance",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN003-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN003-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN003-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN003-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN003-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN003-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN003",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 12,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN003-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN003-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN003-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN003-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN003-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN003-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN003-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN003-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.285Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN003-INTAKE",
+            "quote": "£12"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN003-INTAKE",
+            "quote": "£12"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN003-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN003-INTAKE",
+            "quote": "cash"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 12.",
+            "evidenceIds": [
+              "SYN003-INTAKE",
+              "SYN003-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN003-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN003-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN004",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN004-TITLE",
+        "text": "Trailstep Ridge walking boots, UK 8"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN004-ITEM-SPECIFICS",
+          "text": "Brown leather; UK size 8; original insoles"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN004-DESCRIPTION",
+        "text": "Worn on a few day walks. Soles have plenty of tread by my estimate; no holes."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN004-SELLER-NOTES",
+        "text": "Stored dry in a cupboard; box not included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN004-PAYMENT-TERMS",
+        "text": "£28 by bank transfer."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN004-DELIVERY-TERMS",
+        "text": "£3.50 postage, untracked."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN004",
+      "scenarioCategory": "ordinary",
+      "productCategory": "clothing",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN004-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN004-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN004-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN004-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN004-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN004-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?"
+      ],
+      "assessedDeal": {
+        "id": "SYN004",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 28,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN004-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN004-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "bank transfer",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN004-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "postage, untracked",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN004-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN004-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN004-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN004-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN004-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.285Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN004-INTAKE",
+            "quote": "£28"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN004-INTAKE",
+            "quote": "£28"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN004-INTAKE",
+            "quote": "bank transfer"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN004-INTAKE",
+            "quote": "postage, untracked"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 28.",
+            "evidenceIds": [
+              "SYN004-INTAKE",
+              "SYN004-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: postage, untracked. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN004-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: bank transfer. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN004-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN005",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN005-TITLE",
+        "text": "Inkvale HomeJet 220 printer"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN005-ITEM-SPECIFICS",
+          "text": "Colour inkjet; Wi-Fi; power cable and spare paper tray"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN005-DESCRIPTION",
+        "text": "Printed a test page yesterday. Black cartridge is low; colour levels are shown as about half."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN005-SELLER-NOTES",
+        "text": "No original box; driver disc not included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN005-PAYMENT-TERMS",
+        "text": "£35 via marketplace checkout."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN005-DELIVERY-TERMS",
+        "text": "Collection or courier at buyer's cost."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN005",
+      "scenarioCategory": "ordinary",
+      "productCategory": "printer",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN005-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN005-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN005-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN005-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN005-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN005-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "Which payment method is being requested for this purchase?"
+      ],
+      "assessedDeal": {
+        "id": "SYN005",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 35,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN005-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN005-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "courier at buyer's cost",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN005-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN005-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN005-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN005-INTAKE"
+            ]
+          },
+          {
+            "key": "payment method",
+            "value": "payment method not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN005-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN005-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.286Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN005-INTAKE",
+            "quote": "£35"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN005-INTAKE",
+            "quote": "£35"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN005-INTAKE",
+            "quote": "courier at buyer's cost"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 35.",
+            "evidenceIds": [
+              "SYN005-INTAKE",
+              "SYN005-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: courier at buyer's cost. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN005-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "payment",
+            "title": "Payment method is not stated",
+            "explanation": "The supplied evidence does not establish how payment is expected to be made.",
+            "evidenceIds": [],
+            "ruleId": "payment-unknown",
+            "kind": "unknown",
+            "id": "payment-unknown"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 2 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN006",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN006-TITLE",
+        "text": "Northpath two-person hiking tent"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN006-ITEM-SPECIFICS",
+          "text": "Three-season; 2.4 kg stated; rainfly and poles included"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN006-DESCRIPTION",
+        "text": "Used on four weekends. No leaks in the last trip. One peg is bent but usable according to me."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN006-SELLER-NOTES",
+        "text": "Packed away dry after use."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN006-PAYMENT-TERMS",
+        "text": "£60 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN006-DELIVERY-TERMS",
+        "text": "Can meet at fictional Alderwick park; no shipping."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN006",
+      "scenarioCategory": "ordinary",
+      "productCategory": "outdoor_equipment",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN006-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN006-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN006-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN006-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN006-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN006-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [],
+      "assessedDeal": {
+        "id": "SYN006",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 60,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN006-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN006-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN006-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN006-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "shipping",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN006-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN006-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN006-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN006-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.286Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN006-INTAKE",
+            "quote": "£60"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN006-INTAKE",
+            "quote": "£60"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN006-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN006-INTAKE",
+            "quote": "cash on collection"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN006-INTAKE",
+            "quote": "shipping"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 60.",
+            "evidenceIds": [
+              "SYN006-INTAKE",
+              "SYN006-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN006-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: shipping. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN006-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN006-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has coherent stated terms in the evidence provided. This is not an independent verification of the item, seller, price, or payment protection; compare the details with what you expect before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN007",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN007-TITLE",
+        "text": "Morrow Keys 61 keyboard"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN007-ITEM-SPECIFICS",
+          "text": "61 keys; touch response; sustain pedal and music rest"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN007-DESCRIPTION",
+        "text": "All keys made sound when I checked. A few buttons have faded labels."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN007-SELLER-NOTES",
+        "text": "Used at home, never gigged."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN007-PAYMENT-TERMS",
+        "text": "£110, PayPal Goods and Services."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN007-DELIVERY-TERMS",
+        "text": "Courier £9; packed in original foam."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN007",
+      "scenarioCategory": "ordinary",
+      "productCategory": "musical_instrument",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN007-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN007-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN007-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN007-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN007-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN007-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [],
+      "assessedDeal": {
+        "id": "SYN007",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 110,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN007-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN007-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN007-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "PayPal Goods and Services",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN007-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "Courier £9; packed in original foam",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN007-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN007-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN007-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN007-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.286Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN007-INTAKE",
+            "quote": "£110"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN007-INTAKE",
+            "quote": "£110"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN007-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN007-INTAKE",
+            "quote": "PayPal Goods and Services"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN007-INTAKE",
+            "quote": "Courier £9; packed in original foam"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 110.",
+            "evidenceIds": [
+              "SYN007-INTAKE",
+              "SYN007-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN007-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: Courier £9; packed in original foam. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN007-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: PayPal Goods and Services. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN007-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has coherent stated terms in the evidence provided. This is not an independent verification of the item, seller, price, or payment protection; compare the details with what you expect before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN008",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN008-TITLE",
+        "text": "Bracken Row garden bench"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN008-ITEM-SPECIFICS",
+          "text": "Acacia wood; 120 cm wide; seats two"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN008-DESCRIPTION",
+        "text": "Spent last year under a covered patio. Slats are intact; colour has faded in places."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN008-SELLER-NOTES",
+        "text": "Needs a wipe down; assembly instructions included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN008-PAYMENT-TERMS",
+        "text": "£30 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN008-DELIVERY-TERMS",
+        "text": "Buyer collects from fictional Lowmere."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN008",
+      "scenarioCategory": "ordinary",
+      "productCategory": "garden",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN008-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN008-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN008-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN008-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN008-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN008-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN008",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 30,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN008-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN008-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN008-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN008-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN008-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN008-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN008-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN008-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.286Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN008-INTAKE",
+            "quote": "£30"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN008-INTAKE",
+            "quote": "£30"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN008-INTAKE",
+            "quote": "cash on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 30.",
+            "evidenceIds": [
+              "SYN008-INTAKE",
+              "SYN008-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN008-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 2 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN009",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN009-TITLE",
+        "text": "Northpath Fold child trailer"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN009-ITEM-SPECIFICS",
+          "text": "Single-seat bicycle trailer; rain cover; safety flag"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN009-DESCRIPTION",
+        "text": "Used for local rides. Hitch attached to our bike and rolled normally. Fabric has no tears I noticed."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN009-SELLER-NOTES",
+        "text": "Manufacture label is inside the frame; I haven't checked its date."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN009-PAYMENT-TERMS",
+        "text": "£75 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN009-DELIVERY-TERMS",
+        "text": "Collection from fictional Elm Cross only."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN009",
+      "scenarioCategory": "ordinary",
+      "productCategory": "child_transport",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN009-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN009-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN009-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN009-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN009-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN009-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN009",
+        "status": "ready_for_decision",
+        "item": {
+          "key": "item",
+          "value": "bicycle",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN009-INTAKE"
+          ]
+        },
+        "price": {
+          "key": "price",
+          "value": 75,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN009-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN009-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN009-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN009-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN009-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN009-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN009-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.287Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "item",
+            "evidenceId": "SYN009-INTAKE",
+            "quote": "bicycle"
+          },
+          {
+            "field": "price",
+            "evidenceId": "SYN009-INTAKE",
+            "quote": "£75"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN009-INTAKE",
+            "quote": "£75"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN009-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN009-INTAKE",
+            "quote": "cash on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "item",
+            "title": "Item is identified",
+            "explanation": "The supplied evidence identifies this as bicycle.",
+            "evidenceIds": [
+              "SYN009-INTAKE"
+            ],
+            "ruleId": "item-identified",
+            "kind": "fact",
+            "id": "item-identified"
+          },
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 75.",
+            "evidenceIds": [
+              "SYN009-INTAKE",
+              "SYN009-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN009-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN009-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "bicycle has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN010",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN010-TITLE",
+        "text": "Merefield air fryer, 4.2 L"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN010-ITEM-SPECIFICS",
+          "text": "Digital controls; basket and tray included"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN010-DESCRIPTION",
+        "text": "Heats and timer counts down. Basket coating has a couple of small scratches."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN010-SELLER-NOTES",
+        "text": "Wiped clean after last use; manual is included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN010-PAYMENT-TERMS",
+        "text": "£22 cash or card on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN010-DELIVERY-TERMS",
+        "text": "Pickup from fictional Brackenford; no delivery."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN010",
+      "scenarioCategory": "ordinary",
+      "productCategory": "small_appliance",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN010-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN010-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN010-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN010-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN010-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN010-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN010",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 22,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN010-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN010-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash or card on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN010-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN010-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN010-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN010-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN010-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN010-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.287Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN010-INTAKE",
+            "quote": "£22"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN010-INTAKE",
+            "quote": "£22"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN010-INTAKE",
+            "quote": "cash or card on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 22.",
+            "evidenceIds": [
+              "SYN010-INTAKE",
+              "SYN010-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash or card on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN010-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 2 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN011",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN011-TITLE",
+        "text": "LumaWorks Field 8x binoculars"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN011-ITEM-SPECIFICS",
+          "text": "8x magnification; 42 mm objective; neck strap and soft pouch"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN011-DESCRIPTION",
+        "text": "Focus wheel moves smoothly. Image is clear to me; a small scratch on the right eyecup."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN011-SELLER-NOTES",
+        "text": "Bought for a trip and used twice."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN011-PAYMENT-TERMS",
+        "text": "£48 including postage."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN011-DELIVERY-TERMS",
+        "text": "Standard tracked post included."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN011",
+      "scenarioCategory": "ordinary",
+      "productCategory": "optics",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN011-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN011-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN011-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN011-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN011-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN011-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Which payment method is being requested for this purchase?"
+      ],
+      "assessedDeal": {
+        "id": "SYN011",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 48,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN011-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN011-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN011-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "postage",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN011-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN011-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN011-INTAKE"
+            ]
+          },
+          {
+            "key": "payment method",
+            "value": "payment method not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN011-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN011-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.287Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN011-INTAKE",
+            "quote": "£48"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN011-INTAKE",
+            "quote": "£48"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN011-INTAKE",
+            "quote": "used"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN011-INTAKE",
+            "quote": "postage"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 48.",
+            "evidenceIds": [
+              "SYN011-INTAKE",
+              "SYN011-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN011-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: postage. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN011-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "payment",
+            "title": "Payment method is not stated",
+            "explanation": "The supplied evidence does not establish how payment is expected to be made.",
+            "evidenceIds": [],
+            "ruleId": "payment-unknown",
+            "kind": "unknown",
+            "id": "payment-unknown"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN012",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN012-TITLE",
+        "text": "Stonebridge 27-inch monitor"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN012-ITEM-SPECIFICS",
+          "text": "2560×1440 listed; 75 Hz; HDMI and DisplayPort"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN012-DESCRIPTION",
+        "text": "No dead pixels that I can see. Stand tilts. There is a faint scuff on the rear casing."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN012-SELLER-NOTES",
+        "text": "Power cable included; no HDMI cable."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN012-PAYMENT-TERMS",
+        "text": "£105 by bank transfer."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN012-DELIVERY-TERMS",
+        "text": "Courier estimated at £12."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN012",
+      "scenarioCategory": "ordinary",
+      "productCategory": "computer_accessory",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN012-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN012-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN012-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN012-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN012-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN012-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?"
+      ],
+      "assessedDeal": {
+        "id": "SYN012",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 105,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN012-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN012-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "bank transfer",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN012-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "Courier estimated at £12",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN012-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN012-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN012-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN012-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN012-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.288Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN012-INTAKE",
+            "quote": "£105"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN012-INTAKE",
+            "quote": "£105"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN012-INTAKE",
+            "quote": "bank transfer"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN012-INTAKE",
+            "quote": "Courier estimated at £12"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 105.",
+            "evidenceIds": [
+              "SYN012-INTAKE",
+              "SYN012-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: Courier estimated at £12. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN012-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: bank transfer. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN012-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN013",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN013-TITLE",
+        "text": "Ternwell tennis racket, 300 g"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN013-ITEM-SPECIFICS",
+          "text": "Grip size 3; strung with blue synthetic string"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN013-DESCRIPTION",
+        "text": "Used for one season. Frame has a paint chip near the throat; strings still hold tension for me."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN013-SELLER-NOTES",
+        "text": "Grip tape replaced recently."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN013-PAYMENT-TERMS",
+        "text": "£32 cash."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN013-DELIVERY-TERMS",
+        "text": "Collection from fictional Stonehaven; can post for £4."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN013",
+      "scenarioCategory": "ordinary",
+      "productCategory": "sports_equipment",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN013-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN013-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN013-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN013-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN013-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN013-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "What is the current asking price and currency?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN013",
+        "status": "ready_for_decision",
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN013-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN013-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "unknown_1",
+            "value": "The original asking price is unclear because multiple current-looking monetary amounts are present.",
+            "kind": "fact",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ]
+          },
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ]
+          },
+          {
+            "key": "price",
+            "value": "price not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ]
+          },
+          {
+            "key": "currency",
+            "value": "currency not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN013-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.288Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "unknowns",
+            "evidenceId": "SYN013-INTAKE",
+            "quote": "£32"
+          },
+          {
+            "field": "unknowns",
+            "evidenceId": "SYN013-INTAKE",
+            "quote": "£4"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN013-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN013-INTAKE",
+            "quote": "cash"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "amber",
+            "category": "price",
+            "title": "Price needs confirming",
+            "explanation": "A clear price and currency were not both established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "price-missing",
+            "kind": "unknown",
+            "id": "price-missing"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "unknowns",
+            "title": "Specific details remain unresolved",
+            "explanation": "The original asking price is unclear because multiple current-looking monetary amounts are present.",
+            "evidenceIds": [
+              "SYN013-INTAKE"
+            ],
+            "ruleId": "recorded-unknowns",
+            "kind": "unknown",
+            "id": "recorded-unknowns"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 3 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN014",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN014-TITLE",
+        "text": "Aurelia Beam 1080 projector"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN014-ITEM-SPECIFICS",
+          "text": "Native resolution field says 1920×1080; remote and power lead"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN014-DESCRIPTION",
+        "text": "Used for films at home. Image looked bright in a dark room. Lamp-hours menu showed 640 last time."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN014-SELLER-NOTES",
+        "text": "One remote battery cover is taped at the edge."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN014-PAYMENT-TERMS",
+        "text": "£130, PayPal purchase payment."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN014-DELIVERY-TERMS",
+        "text": "Collection preferred; post £10 extra."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN014",
+      "scenarioCategory": "ordinary",
+      "productCategory": "projector",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN014-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN014-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN014-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN014-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN014-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN014-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "What is the current asking price and currency?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN014",
+        "status": "ready_for_decision",
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN014-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "PayPal purchase payment",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN014-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "unknown_1",
+            "value": "The original asking price is unclear because multiple current-looking monetary amounts are present.",
+            "kind": "fact",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ]
+          },
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ]
+          },
+          {
+            "key": "price",
+            "value": "price not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ]
+          },
+          {
+            "key": "currency",
+            "value": "currency not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN014-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.289Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "unknowns",
+            "evidenceId": "SYN014-INTAKE",
+            "quote": "£130"
+          },
+          {
+            "field": "unknowns",
+            "evidenceId": "SYN014-INTAKE",
+            "quote": "£10"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN014-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN014-INTAKE",
+            "quote": "PayPal purchase payment"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "amber",
+            "category": "price",
+            "title": "Price needs confirming",
+            "explanation": "A clear price and currency were not both established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "price-missing",
+            "kind": "unknown",
+            "id": "price-missing"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: PayPal purchase payment. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "unknowns",
+            "title": "Specific details remain unresolved",
+            "explanation": "The original asking price is unclear because multiple current-looking monetary amounts are present.",
+            "evidenceIds": [
+              "SYN014-INTAKE"
+            ],
+            "ruleId": "recorded-unknowns",
+            "kind": "unknown",
+            "id": "recorded-unknowns"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 3 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN015",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN015-TITLE",
+        "text": "Hearthline stand mixer, cream"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN015-ITEM-SPECIFICS",
+          "text": "4.5 L bowl; whisk and dough hook included"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN015-DESCRIPTION",
+        "text": "Mixes cake batter smoothly. Dough hook used twice. Speed dial has numbers worn off but clicks at each setting."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN015-SELLER-NOTES",
+        "text": "Bowl has light utensil marks."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN015-PAYMENT-TERMS",
+        "text": "£85 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN015-DELIVERY-TERMS",
+        "text": "Collection from fictional Westmere."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN015",
+      "scenarioCategory": "ordinary",
+      "productCategory": "kitchenware",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN015-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN015-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN015-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN015-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN015-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN015-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN015",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 85,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN015-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN015-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN015-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN015-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN015-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN015-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN015-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN015-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.290Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN015-INTAKE",
+            "quote": "£85"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN015-INTAKE",
+            "quote": "£85"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN015-INTAKE",
+            "quote": "used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN015-INTAKE",
+            "quote": "cash on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 85.",
+            "evidenceIds": [
+              "SYN015-INTAKE",
+              "SYN015-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN015-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN015-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN016",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN016-TITLE",
+        "text": "Ternwell recreational kayak, 2.7 m"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN016-ITEM-SPECIFICS",
+          "text": "Single-seat sit-on-top; paddle and backrest included"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN016-DESCRIPTION",
+        "text": "Used on a calm lake. Holds air? It is a rigid plastic shell, no inflation. Scratches underneath from launching."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN016-SELLER-NOTES",
+        "text": "Stored in garage; no visible cracks per seller."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN016-PAYMENT-TERMS",
+        "text": "£95 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN016-DELIVERY-TERMS",
+        "text": "Buyer collects from fictional Larch End; roof straps not included."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN016",
+      "scenarioCategory": "ordinary",
+      "productCategory": "water_sports",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN016-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN016-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN016-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN016-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN016-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN016-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN016",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 95,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN016-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN016-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN016-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN016-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN016-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN016-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN016-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN016-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.290Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN016-INTAKE",
+            "quote": "£95"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN016-INTAKE",
+            "quote": "£95"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN016-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN016-INTAKE",
+            "quote": "cash on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 95.",
+            "evidenceIds": [
+              "SYN016-INTAKE",
+              "SYN016-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN016-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN016-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN017",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN017-TITLE",
+        "text": "Merefield Stitch 40 sewing machine"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN017-ITEM-SPECIFICS",
+          "text": "40 stitch settings; pedal and hard cover included"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN017-DESCRIPTION",
+        "text": "Straight stitch and zigzag worked on cotton yesterday. Bobbin winder occasionally needs a second push."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN017-SELLER-NOTES",
+        "text": "Needle pack not included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN017-PAYMENT-TERMS",
+        "text": "£55 by marketplace checkout."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN017-DELIVERY-TERMS",
+        "text": "Tracked delivery £7."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN017",
+      "scenarioCategory": "ordinary",
+      "productCategory": "sewing_machine",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN017-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN017-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN017-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN017-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN017-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN017-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "Which payment method is being requested for this purchase?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN017",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 55,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN017-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN017-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN017-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN017-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN017-INTAKE"
+            ]
+          },
+          {
+            "key": "payment method",
+            "value": "payment method not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN017-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN017-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN017-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.290Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN017-INTAKE",
+            "quote": "£55"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN017-INTAKE",
+            "quote": "£55"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 55.",
+            "evidenceIds": [
+              "SYN017-INTAKE",
+              "SYN017-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "amber",
+            "category": "payment",
+            "title": "Payment method is not stated",
+            "explanation": "The supplied evidence does not establish how payment is expected to be made.",
+            "evidenceIds": [],
+            "ruleId": "payment-unknown",
+            "kind": "unknown",
+            "id": "payment-unknown"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 3 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN018",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN018-TITLE",
+        "text": "Bracken Row ergonomic office chair"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN018-ITEM-SPECIFICS",
+          "text": "Adjustable height; mesh back; fixed arms"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN018-DESCRIPTION",
+        "text": "Height lever works. Back recline holds for me. Seat foam feels firm; fabric has a small snag."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN018-SELLER-NOTES",
+        "text": "No assembly tools included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN018-PAYMENT-TERMS",
+        "text": "£40 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN018-DELIVERY-TERMS",
+        "text": "Collection from fictional Alderwick; lift access available."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN018",
+      "scenarioCategory": "ordinary",
+      "productCategory": "office_furniture",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN018-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN018-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN018-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN018-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN018-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN018-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN018",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 40,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN018-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN018-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN018-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN018-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN018-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN018-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN018-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN018-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.290Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN018-INTAKE",
+            "quote": "£40"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN018-INTAKE",
+            "quote": "£40"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN018-INTAKE",
+            "quote": "cash on collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 40.",
+            "evidenceIds": [
+              "SYN018-INTAKE",
+              "SYN018-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN018-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 2 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN019",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN019-TITLE",
+        "text": "Pinecone Skylet quadcopter"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN019-ITEM-SPECIFICS",
+          "text": "Controller, two batteries and propeller guards included"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN019-DESCRIPTION",
+        "text": "Flown in a park a few times. One battery lasts around 12 minutes according to the app. No crashes that I know of."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN019-SELLER-NOTES",
+        "text": "One spare propeller included; original box gone."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN019-PAYMENT-TERMS",
+        "text": "£115, PayPal purchase payment."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN019-DELIVERY-TERMS",
+        "text": "Courier £8; batteries shipped with device."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN019",
+      "scenarioCategory": "ordinary",
+      "productCategory": "drone",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN019-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN019-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN019-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN019-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN019-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN019-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?"
+      ],
+      "assessedDeal": {
+        "id": "SYN019",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 115,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN019-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN019-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "PayPal purchase payment",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN019-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "Courier £8; batteries shipped with device",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN019-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN019-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN019-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN019-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN019-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.290Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN019-INTAKE",
+            "quote": "£115"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN019-INTAKE",
+            "quote": "£115"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN019-INTAKE",
+            "quote": "PayPal purchase payment"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN019-INTAKE",
+            "quote": "Courier £8; batteries shipped with device"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 115.",
+            "evidenceIds": [
+              "SYN019-INTAKE",
+              "SYN019-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: Courier £8; batteries shipped with device. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN019-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: PayPal purchase payment. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN019-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN020",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN020-TITLE",
+        "text": "Morrow Field watch, 40 mm"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN020-ITEM-SPECIFICS",
+          "text": "Quartz; stainless case; brown leather strap"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN020-DESCRIPTION",
+        "text": "Keeps time over the last week. Small scratch on crystal near 4 o'clock; strap has wear holes."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN020-SELLER-NOTES",
+        "text": "No papers or spare strap."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN020-PAYMENT-TERMS",
+        "text": "£68 by bank transfer."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN020-DELIVERY-TERMS",
+        "text": "£3 postage, untracked."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN020",
+      "scenarioCategory": "ordinary",
+      "productCategory": "watch",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN020-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN020-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN020-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN020-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN020-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN020-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?"
+      ],
+      "assessedDeal": {
+        "id": "SYN020",
+        "status": "ready_for_decision",
+        "item": {
+          "key": "item",
+          "value": "watch",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN020-INTAKE"
+          ]
+        },
+        "price": {
+          "key": "price",
+          "value": 68,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN020-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN020-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "bank transfer",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN020-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "postage, untracked",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN020-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN020-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN020-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN020-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.291Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "item",
+            "evidenceId": "SYN020-INTAKE",
+            "quote": "watch"
+          },
+          {
+            "field": "price",
+            "evidenceId": "SYN020-INTAKE",
+            "quote": "£68"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN020-INTAKE",
+            "quote": "£68"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN020-INTAKE",
+            "quote": "bank transfer"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN020-INTAKE",
+            "quote": "postage, untracked"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "item",
+            "title": "Item is identified",
+            "explanation": "The supplied evidence identifies this as watch.",
+            "evidenceIds": [
+              "SYN020-INTAKE"
+            ],
+            "ruleId": "item-identified",
+            "kind": "fact",
+            "id": "item-identified"
+          },
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 68.",
+            "evidenceIds": [
+              "SYN020-INTAKE",
+              "SYN020-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: postage, untracked. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN020-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: bank transfer. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN020-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "watch has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN021",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN021-TITLE",
+        "text": "Hearthline compact stereo amplifier"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN021-ITEM-SPECIFICS",
+          "text": "Two speaker outputs; optical and RCA inputs"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN021-DESCRIPTION",
+        "text": "Both channels played through my bookshelf speakers. Volume knob has a slight scratchy sound near low volume."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN021-SELLER-NOTES",
+        "text": "Remote is included; batteries not included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN021-PAYMENT-TERMS",
+        "text": "£72 cash or card at collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN021-DELIVERY-TERMS",
+        "text": "Collection from fictional Lowmere."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN021",
+      "scenarioCategory": "ordinary",
+      "productCategory": "home_audio",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN021-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN021-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN021-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN021-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN021-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN021-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "How will the item be delivered or collected, and what will delivery cost?"
+      ],
+      "assessedDeal": {
+        "id": "SYN021",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 72,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN021-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN021-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash or card at collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN021-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN021-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN021-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN021-INTAKE"
+            ]
+          },
+          {
+            "key": "delivery terms",
+            "value": "delivery terms not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN021-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN021-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.291Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN021-INTAKE",
+            "quote": "£72"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN021-INTAKE",
+            "quote": "£72"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN021-INTAKE",
+            "quote": "cash or card at collection"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 72.",
+            "evidenceIds": [
+              "SYN021-INTAKE",
+              "SYN021-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "amber",
+            "category": "delivery",
+            "title": "Delivery or collection is unclear",
+            "explanation": "No delivery or collection arrangement was established from the supplied evidence.",
+            "evidenceIds": [],
+            "ruleId": "delivery-unknown",
+            "kind": "unknown",
+            "id": "delivery-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash or card at collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN021-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 2 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN022",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN022-TITLE",
+        "text": "Merefield BlendPro jug blender"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN022-ITEM-SPECIFICS",
+          "text": "1.5 L glass jug; two speed buttons and pulse"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN022-DESCRIPTION",
+        "text": "Crushed ice in my last smoothie. Lid seal has a small nick but does not leak in my use."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN022-SELLER-NOTES",
+        "text": "Spare gasket included; instruction booklet missing."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN022-PAYMENT-TERMS",
+        "text": "£18 cash."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN022-DELIVERY-TERMS",
+        "text": "Pickup only from fictional Brackenford."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN022",
+      "scenarioCategory": "ordinary",
+      "productCategory": "blender",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN022-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN022-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN022-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN022-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN022-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN022-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "What tests or repairs have been completed, and which functions or parts are still known to be faulty?"
+      ],
+      "assessedDeal": {
+        "id": "SYN022",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 18,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN022-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN022-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "missing",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN022-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN022-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "Pickup only from fictional Brackenford",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN022-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN022-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN022-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN022-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.291Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN022-INTAKE",
+            "quote": "£18"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN022-INTAKE",
+            "quote": "£18"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN022-INTAKE",
+            "quote": "missing"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN022-INTAKE",
+            "quote": "cash"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN022-INTAKE",
+            "quote": "Pickup only from fictional Brackenford"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 18.",
+            "evidenceIds": [
+              "SYN022-INTAKE",
+              "SYN022-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Disclosed condition limits need review",
+            "explanation": "The supplied evidence describes: missing. This is a seller description, not an independent inspection or an assessment of intent.",
+            "evidenceIds": [
+              "SYN022-INTAKE"
+            ],
+            "ruleId": "condition-disclosed-faults",
+            "kind": "fact",
+            "id": "condition-disclosed-faults"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: Pickup only from fictional Brackenford. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN022-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN022-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN023",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN023-TITLE",
+        "text": "Aurelia USB-C dock, 11-port"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN023-ITEM-SPECIFICS",
+          "text": "HDMI, Ethernet, SD reader, 100 W pass-through listed"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN023-DESCRIPTION",
+        "text": "Connected laptop to monitor and Ethernet yesterday. SD slot not tested. Cable is attached and about 20 cm long."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN023-SELLER-NOTES",
+        "text": "No power adapter; designed to use laptop charger."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN023-PAYMENT-TERMS",
+        "text": "£29, card or cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN023-DELIVERY-TERMS",
+        "text": "Postage £3.90."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN023",
+      "scenarioCategory": "ordinary",
+      "productCategory": "computer_accessory",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN023-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN023-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN023-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN023-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN023-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN023-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "What tests or repairs have been completed, and which functions or parts are still known to be faulty?"
+      ],
+      "assessedDeal": {
+        "id": "SYN023",
+        "status": "ready_for_decision",
+        "item": {
+          "key": "item",
+          "value": "laptop",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN023-INTAKE"
+          ]
+        },
+        "price": {
+          "key": "price",
+          "value": 29,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN023-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN023-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "not tested; No power adapter; designed to use laptop charger",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN023-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN023-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "Postage £3",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN023-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN023-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN023-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.291Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "item",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "laptop"
+          },
+          {
+            "field": "price",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "£29"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "£29"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "not tested"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "No power adapter; designed to use laptop charger"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "cash on collection"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN023-INTAKE",
+            "quote": "Postage £3"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "item",
+            "title": "Item is identified",
+            "explanation": "The supplied evidence identifies this as laptop.",
+            "evidenceIds": [
+              "SYN023-INTAKE"
+            ],
+            "ruleId": "item-identified",
+            "kind": "fact",
+            "id": "item-identified"
+          },
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 29.",
+            "evidenceIds": [
+              "SYN023-INTAKE",
+              "SYN023-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Disclosed condition limits need review",
+            "explanation": "The supplied evidence describes: not tested; No power adapter; designed to use laptop charger. This is a seller description, not an independent inspection or an assessment of intent.",
+            "evidenceIds": [
+              "SYN023-INTAKE"
+            ],
+            "ruleId": "condition-disclosed-faults",
+            "kind": "fact",
+            "id": "condition-disclosed-faults"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: Postage £3. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN023-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN023-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "laptop has some stated deal details, with 1 point still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN024",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN024-TITLE",
+        "text": "Northpath junior skis, 130 cm"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN024-ITEM-SPECIFICS",
+          "text": "130 cm length; bindings marked size-adjustable"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN024-DESCRIPTION",
+        "text": "Used for one winter. Bases have normal scratches. Edges were serviced before last season, according to seller."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN024-SELLER-NOTES",
+        "text": "Boot size last used was UK 5; boots not included."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN024-PAYMENT-TERMS",
+        "text": "£50 cash on collection."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN024-DELIVERY-TERMS",
+        "text": "Meet at fictional Stonehaven; no shipping."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN024",
+      "scenarioCategory": "ordinary",
+      "productCategory": "outdoor_equipment",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN024-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN024-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN024-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN024-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN024-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN024-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [],
+      "assessedDeal": {
+        "id": "SYN024",
+        "status": "ready_for_decision",
+        "price": {
+          "key": "price",
+          "value": 50,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN024-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN024-INTAKE"
+          ]
+        },
+        "condition": {
+          "key": "condition",
+          "value": "Used; used",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN024-INTAKE"
+          ]
+        },
+        "paymentMethod": {
+          "key": "payment_method",
+          "value": "cash on collection",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN024-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "shipping",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN024-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "item",
+            "value": "item not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN024-INTAKE"
+            ]
+          },
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN024-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN024-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.291Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "price",
+            "evidenceId": "SYN024-INTAKE",
+            "quote": "£50"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN024-INTAKE",
+            "quote": "£50"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN024-INTAKE",
+            "quote": "Used"
+          },
+          {
+            "field": "condition",
+            "evidenceId": "SYN024-INTAKE",
+            "quote": "used"
+          },
+          {
+            "field": "paymentMethod",
+            "evidenceId": "SYN024-INTAKE",
+            "quote": "cash on collection"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN024-INTAKE",
+            "quote": "shipping"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 50.",
+            "evidenceIds": [
+              "SYN024-INTAKE",
+              "SYN024-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "green",
+            "category": "condition",
+            "title": "Condition is described",
+            "explanation": "The supplied evidence describes the condition as “Used; used”. This is a seller description, not an independent inspection.",
+            "evidenceIds": [
+              "SYN024-INTAKE"
+            ],
+            "ruleId": "condition-stated",
+            "kind": "fact",
+            "id": "condition-stated"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: shipping. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN024-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "green",
+            "category": "payment",
+            "title": "A payment method is stated",
+            "explanation": "The supplied evidence states: cash on collection. This checker has not verified the payment setup or protection eligibility.",
+            "evidenceIds": [
+              "SYN024-INTAKE"
+            ],
+            "ruleId": "payment-stated",
+            "kind": "fact",
+            "id": "payment-stated"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "The item has coherent stated terms in the evidence provided. This is not an independent verification of the item, seller, price, or payment protection; compare the details with what you expect before deciding."
+      }
+    }
+  },
+  {
+    "caseId": "SYN025",
+    "synthetic": true,
+    "fictional": true,
+    "testOnly": true,
+    "input": {
+      "title": {
+        "sourceId": "SYN025-TITLE",
+        "text": "LumaWorks Studio headphones"
+      },
+      "itemSpecifics": [
+        {
+          "sourceId": "SYN025-ITEM-SPECIFICS",
+          "text": "Closed-back wired; detachable 3.5 mm cable; soft pouch"
+        }
+      ],
+      "description": {
+        "sourceId": "SYN025-DESCRIPTION",
+        "text": "Left and right channels work on my phone. Ear pads show some flaking. Cable has no cuts that I can see."
+      },
+      "sellerNotes": {
+        "sourceId": "SYN025-SELLER-NOTES",
+        "text": "Replacement pads are available from the maker, I think."
+      },
+      "paymentTerms": {
+        "sourceId": "SYN025-PAYMENT-TERMS",
+        "text": "£24 including postage."
+      },
+      "deliveryTerms": {
+        "sourceId": "SYN025-DELIVERY-TERMS",
+        "text": "Letter post included; no tracking."
+      },
+      "followUpMessage": null
+    },
+    "ppdcAssessment": {
+      "caseId": "SYN025",
+      "scenarioCategory": "ordinary",
+      "productCategory": "music_accessory",
+      "sourceMap": [
+        {
+          "label": "Listing title",
+          "sourceId": "SYN025-TITLE"
+        },
+        {
+          "label": "Item specifics 1",
+          "sourceId": "SYN025-ITEM-SPECIFICS"
+        },
+        {
+          "label": "Listing description",
+          "sourceId": "SYN025-DESCRIPTION"
+        },
+        {
+          "label": "Seller notes",
+          "sourceId": "SYN025-SELLER-NOTES"
+        },
+        {
+          "label": "Payment terms",
+          "sourceId": "SYN025-PAYMENT-TERMS"
+        },
+        {
+          "label": "Delivery or collection terms",
+          "sourceId": "SYN025-DELIVERY-TERMS"
+        }
+      ],
+      "buyerQuestions": [
+        "Can you describe the item's condition and any repairs?",
+        "Which payment method is being requested for this purchase?"
+      ],
+      "assessedDeal": {
+        "id": "SYN025",
+        "status": "ready_for_decision",
+        "item": {
+          "key": "item",
+          "value": "phone",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN025-INTAKE"
+          ]
+        },
+        "price": {
+          "key": "price",
+          "value": 24,
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN025-INTAKE"
+          ]
+        },
+        "currency": {
+          "key": "currency",
+          "value": "GBP",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN025-INTAKE"
+          ]
+        },
+        "deliveryTerms": {
+          "key": "delivery_terms",
+          "value": "postage",
+          "kind": "fact",
+          "evidenceIds": [
+            "SYN025-INTAKE"
+          ]
+        },
+        "materialPromises": [],
+        "unknowns": [
+          {
+            "key": "model",
+            "value": "model not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN025-INTAKE"
+            ]
+          },
+          {
+            "key": "condition",
+            "value": "condition not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN025-INTAKE"
+            ]
+          },
+          {
+            "key": "payment method",
+            "value": "payment method not established by supplied text",
+            "kind": "unknown",
+            "evidenceIds": [
+              "SYN025-INTAKE"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "SYN025-INTAKE",
+            "source": "user",
+            "label": "Synthetic field-labelled text intake",
+            "capturedAt": "2026-10-08T12:56:44.291Z",
+            "private": true
+          }
+        ],
+        "evidenceRefs": [
+          {
+            "field": "item",
+            "evidenceId": "SYN025-INTAKE",
+            "quote": "phone"
+          },
+          {
+            "field": "price",
+            "evidenceId": "SYN025-INTAKE",
+            "quote": "£24"
+          },
+          {
+            "field": "currency",
+            "evidenceId": "SYN025-INTAKE",
+            "quote": "£24"
+          },
+          {
+            "field": "deliveryTerms",
+            "evidenceId": "SYN025-INTAKE",
+            "quote": "postage"
+          }
+        ],
+        "findings": [
+          {
+            "severity": "green",
+            "category": "item",
+            "title": "Item is identified",
+            "explanation": "The supplied evidence identifies this as phone.",
+            "evidenceIds": [
+              "SYN025-INTAKE"
+            ],
+            "ruleId": "item-identified",
+            "kind": "fact",
+            "id": "item-identified"
+          },
+          {
+            "severity": "green",
+            "category": "price",
+            "title": "Price is stated",
+            "explanation": "The listing states GBP 24.",
+            "evidenceIds": [
+              "SYN025-INTAKE",
+              "SYN025-INTAKE"
+            ],
+            "ruleId": "price-stated",
+            "kind": "fact",
+            "id": "price-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "condition",
+            "title": "Condition needs clarification",
+            "explanation": "The supplied evidence does not establish the item condition.",
+            "evidenceIds": [],
+            "ruleId": "condition-unknown",
+            "kind": "unknown",
+            "id": "condition-unknown"
+          },
+          {
+            "severity": "green",
+            "category": "delivery",
+            "title": "Delivery terms are stated",
+            "explanation": "The supplied evidence says: postage. Check that the practical arrangement matches what you expect.",
+            "evidenceIds": [
+              "SYN025-INTAKE"
+            ],
+            "ruleId": "delivery-stated",
+            "kind": "fact",
+            "id": "delivery-stated"
+          },
+          {
+            "severity": "amber",
+            "category": "payment",
+            "title": "Payment method is not stated",
+            "explanation": "The supplied evidence does not establish how payment is expected to be made.",
+            "evidenceIds": [],
+            "ruleId": "payment-unknown",
+            "kind": "unknown",
+            "id": "payment-unknown"
+          }
+        ],
+        "priceDisplays": [],
+        "conclusion": "phone has some stated deal details, with 2 points still needing clarification or independent checking. No public price or seller checks have been run. Consider resolving the amber points before deciding."
+      }
+    }
+  }
+]
