@@ -1,0 +1,52 @@
+[
+  {
+    "caseId": "AI001-A",
+    "coverage": "ordinary coherent sale; no red flags",
+    "segments": [
+      { "id": "AI001-A-title", "field": "title", "text": "Nintendo Switch OLED", "order": 0 },
+      { "id": "AI001-A-description", "field": "description", "text": "Asking price is £160. Lightly used and works as expected. Includes the original dock.", "order": 1 },
+      { "id": "AI001-A-payment", "field": "payment_terms", "text": "PayPal Goods & Services accepted.", "order": 2 },
+      { "id": "AI001-A-delivery", "field": "delivery_terms", "text": "Tracked postage is £4.", "order": 3 }
+    ]
+  },
+  {
+    "caseId": "AI001-B",
+    "coverage": "explicit Friends & Family purchase request",
+    "segments": [
+      { "id": "AI001-B-title", "field": "title", "text": "Mallow Finch compact camera", "order": 0 },
+      { "id": "AI001-B-description", "field": "description", "text": "Used camera. The shutter and screen are described as working.", "order": 1 },
+      { "id": "AI001-B-payment", "field": "payment_terms", "text": "Seller requests PayPal Friends & Family for this item purchase.", "order": 2 },
+      { "id": "AI001-B-delivery", "field": "delivery_terms", "text": "Tracked postage available.", "order": 3 }
+    ]
+  },
+  {
+    "caseId": "AI001-C",
+    "coverage": "explicit rejection of Friends & Family",
+    "segments": [
+      { "id": "AI001-C-title", "field": "title", "text": "Ternberry wireless headphones", "order": 0 },
+      { "id": "AI001-C-payment", "field": "payment_terms", "text": "I do not accept Friends & Family. PayPal Goods & Services is accepted.", "order": 1 },
+      { "id": "AI001-C-delivery", "field": "delivery_terms", "text": "Collection or tracked postage by agreement.", "order": 2 }
+    ]
+  },
+  {
+    "caseId": "AI001-D",
+    "coverage": "conflicting item identity and condition; details unresolved",
+    "segments": [
+      { "id": "AI001-D-title", "field": "title", "text": "Model: Nori Vela X7 manual coffee grinder", "order": 0 },
+      { "id": "AI001-D-specifics", "field": "item_specifics", "text": "Model: Nori Vela X5", "order": 1 },
+      { "id": "AI001-D-description", "field": "description", "text": "Seller says it works and is in good condition.", "order": 2 },
+      { "id": "AI001-D-notes", "field": "seller_notes", "text": "Seller later says the motor stalls under load; exact condition is unclear.", "order": 3 },
+      { "id": "AI001-D-payment", "field": "payment_terms", "text": "Payment method to be agreed.", "order": 4 }
+    ]
+  },
+  {
+    "caseId": "AI001-E",
+    "coverage": "ambiguous details requiring a useful question",
+    "segments": [
+      { "id": "AI001-E-title", "field": "title", "text": "Pipestone pocket radio", "order": 0 },
+      { "id": "AI001-E-description", "field": "description", "text": "Untested. £35. The listing does not say whether a power adapter is included.", "order": 1 },
+      { "id": "AI001-E-payment", "field": "payment_terms", "text": "PayPal Goods & Services accepted.", "order": 2 },
+      { "id": "AI001-E-delivery", "field": "delivery_terms", "text": "Postage cost varies by destination.", "order": 3 }
+    ]
+  }
+]

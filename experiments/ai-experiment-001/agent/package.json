@@ -1,0 +1,13 @@
+{
+  "name": "ppdc-ai-experiment-001",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node --import tsx index.ts" },
+  "dependencies": {
+    "@astropods/adapter-core": "latest",
+    "@astropods/messaging": "latest",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.5"
+  }
+}
