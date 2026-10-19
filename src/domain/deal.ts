@@ -32,6 +32,7 @@ export interface DealCandidate {
   modality: CandidateModality;
   temporalStatus: CandidateTemporalStatus;
   intent?: CandidateIntent;
+  priceRole?: "asking_price" | "postage" | "return_postage" | "deposit" | "conversion" | "other";
 }
 export interface Evidence {
   id: string;
